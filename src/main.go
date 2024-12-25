@@ -3,6 +3,7 @@ package main
 import (
 	"api-gateway/controllers"
 	"api-gateway/middleware"
+	"k8s.io/klog/v2"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -13,10 +14,12 @@ const (
 )
 
 func main() {
+	// init klog
+	klog.InitFlags(nil)
 	// Initialize the gRPC client connection.
 	grpcClient, err := controllers.InitGRPCClient(address)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to initialize gRPC client, %v", err)
 	}
 	router := gin.Default()
 
