@@ -1,8 +1,6 @@
 package utils
 
-import (
-	"log"
-)
+import "k8s.io/klog"
 
 var (
 	DebugMode = true
@@ -10,6 +8,6 @@ var (
 
 func Debug(format string, v ...interface{}) {
 	if DebugMode {
-		log.Printf("[DEBUG] "+format, v...)
+		klog.V(2).Infof("[DEBUG] "+format, v...)
 	}
 }

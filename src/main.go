@@ -3,7 +3,8 @@ package main
 import (
 	"api-gateway/controllers"
 	"api-gateway/middleware"
-	"log"
+	"fmt"
+	"os"
 
 	"k8s.io/klog/v2"
 
@@ -15,12 +16,13 @@ const (
 )
 
 func main() {
-	// init klog
 	klog.InitFlags(nil)
+	defer klog.Flush()
+
 	// Initialize the gRPC client connection.
 	grpcClient, err := controllers.InitGRPCClient(address)
 	if err != nil {
-		log.Fatalf("Failed to initialize gRPC client, %v", err)
+		klog.Fatalf("Failed to initialize gRPC client, %v", err)
 	}
 	router := gin.Default()
 
@@ -33,5 +35,11 @@ func main() {
 		controllers.GetStudentGradesHandler(c, grpcClient)
 	})
 
-	router.Run(":1234")
+	// Get the port from the environment variable, default to 1234 if not set
+	port := os.Getenv("API_GATEWAY_PORT")
+	if port == "" {
+		klog.Fatalf("API_GATEWAY_PORT is not set")
+	}
+	// Start the server on the specified port
+	router.Run(fmt.Sprintf(":%s", port))
 }

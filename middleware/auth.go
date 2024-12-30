@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 
 	"api-gateway/utils"
 
@@ -17,6 +18,10 @@ import (
 // LoginHandler is the handler for the login route.
 func LoginHandler(c *gin.Context) {
 	var credentials models.LoginRequest
+
+	clientSecret := os.Getenv("CLIENT_SECRET")
+	utils.Debug("Client secret: %s", clientSecret)
+
 	if err := c.ShouldBindJSON(&credentials); err != nil {
 		utils.Debug("Invalid JSON input: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
@@ -24,7 +29,7 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	// Keycloak configuration
-	keycloakURL := "http://localhost:8080"
+	keycloakURL := os.Getenv("KEYCLOAK_URL")
 	tokenURL := fmt.Sprintf("%s/realms/betterGR/protocol/openid-connect/token", keycloakURL)
 
 	utils.Debug("Attempting login for user: %s", credentials.Username)
@@ -34,7 +39,7 @@ func LoginHandler(c *gin.Context) {
 	data := url.Values{}
 	data.Set("grant_type", "password")
 	data.Set("client_id", "api-gateway")
-	data.Set("client_secret", "**********")
+	data.Set("client_secret", clientSecret)
 	data.Set("username", credentials.Username)
 	data.Set("password", credentials.Password)
 
