@@ -8,9 +8,8 @@ import (
 	"os"
 )
 
-// initialize grades microservice
+// InitiateGradesMicroservice initialize grades microservice
 func InitiateGradesMicroservice(router *gin.Engine) {
-	controllers.InitGradesGRPCClient(os.Getenv("GRADES_ADDRESS"))
 	_, err := RegisterGradesRoutes(router)
 	if err != nil {
 		klog.Fatalf("Failed to register grades routes, %v", err)

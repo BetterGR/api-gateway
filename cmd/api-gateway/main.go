@@ -1,7 +1,7 @@
 package main
 
 import (
-	roterApi "github.com/BetterGR/api-gateway/api/routes"
+	routerApi "github.com/BetterGR/api-gateway/api/routes"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +21,7 @@ func main() {
 		klog.Fatalf("API_GATEWAY_PORT is not set")
 	}
 	router := gin.New()
-	roterApi.InitiateRoutes(router)
+	routerApi.InitiateRoutes(router)
 	err := router.Run(":" + port)
 	if err != nil {
 		klog.Fatalf("Failed to start the server, %v", err)
