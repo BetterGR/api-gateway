@@ -2,6 +2,8 @@ module github.com/BetterGR/api-gateway
 
 replace github.com/BetterGR/api-gateway => /Users/sabryassaf/github.com/BetterGR/api-gateway
 
+replace github.com/BetterGR/grades-microservice => /Users/sabryassaf/github.com/BetterGR/grades-microservice
+
 go 1.23.3
 
 require (

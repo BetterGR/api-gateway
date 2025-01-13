@@ -22,12 +22,10 @@ func InitGradesGRPCClient(address string) (protos.GradesServiceClient, error) {
 	return protos.NewGradesServiceClient(conn), nil
 }
 
-// GetStudentGradesHandler handles REST requests and calls the gRPC Grades Microservice.
-func GetStudentGradesHandler(c *gin.Context, grpcClient protos.GradesServiceClient) {
+// GetStudentCourseGradesHandler handles REST requests and calls the gRPC Grades Microservice.
+func GetStudentCourseGradesHandler(c *gin.Context, grpcClient protos.GradesServiceClient) {
 	studentId := c.Param("studentId")
 	courseId := c.Param("courseId")
-	klog.Info("here")
-
 	// Build gRPC request.
 	request := &protos.GetStudentCourseGradesRequest{
 		StudentId: studentId,
@@ -48,4 +46,28 @@ func GetStudentGradesHandler(c *gin.Context, grpcClient protos.GradesServiceClie
 
 	// Send response to the client.
 	c.JSON(http.StatusOK, response.CourseGrades)
+}
+
+// GetStudentGradesHandler handles REST requests and calls the gRPC Grades Microservice to return
+// all the student grades
+func GetStudentGradesHandler(c *gin.Context, grpcClient protos.GradesServiceClient) {
+	studentId := c.Param("studentId")
+	klog.Info("Student ID: %s", studentId)
+	// Build gRPC request.
+	request := &protos.StudentId{StudentId: studentId}
+
+	// Call the gRPC server.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	response, err := grpcClient.GetStudentGrades(ctx, request)
+	logger := klog.FromContext(ctx)
+	if err != nil {
+		logger.Info("Error calling gRPC Grades Microservice: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch grades"})
+
+		return
+	}
+	c.JSON(http.StatusOK, response)
+
 }
