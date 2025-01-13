@@ -1,4 +1,6 @@
-module api-gateway
+module github.com/BetterGR/api-gateway
+
+replace github.com/BetterGR/api-gateway => /Users/sabryassaf/github.com/BetterGR/api-gateway
 
 go 1.23.3
 
@@ -6,6 +8,7 @@ require (
 	github.com/BetterGR/grades-microservice v0.0.0-20241215152914-659c6f21ef47
 	github.com/gin-gonic/gin v1.10.0
 	google.golang.org/grpc v1.69.2
+	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.130.1
 )
 

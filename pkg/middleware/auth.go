@@ -1,16 +1,16 @@
 package middleware
 
 import (
-	"api-gateway/models"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/BetterGR/api-gateway/pkg/models"
+	"github.com/BetterGR/api-gateway/pkg/utils"
 	"io"
+	"k8s.io/klog/v2"
 	"net/http"
 	"net/url"
 	"os"
-
-	"api-gateway/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ import (
 // LoginHandler is the handler for the login route.
 func LoginHandler(c *gin.Context) {
 	var credentials models.LoginRequest
-
+	klog.Info("LoginHandler")
 	clientSecret := os.Getenv("CLIENT_SECRET")
 	utils.Debug("Client secret: %s", clientSecret)
 
@@ -42,7 +42,8 @@ func LoginHandler(c *gin.Context) {
 	data.Set("client_secret", clientSecret)
 	data.Set("username", credentials.Username)
 	data.Set("password", credentials.Password)
-
+	klog.Info(credentials.Username)
+	klog.Info(credentials.Password)
 	utils.Debug("Sending request with data: %+v", data)
 
 	resp, err := http.PostForm(tokenURL, data)

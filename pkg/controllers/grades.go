@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-func InitGRPCClient(address string) (protos.GradesServiceClient, error) {
-	// Initialize the gRPC client connection.
+// InitGradesGRPCClient initializes the grades-microservice gRPC client connection.
+func InitGradesGRPCClient(address string) (protos.GradesServiceClient, error) {
 	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
@@ -26,13 +26,13 @@ func InitGRPCClient(address string) (protos.GradesServiceClient, error) {
 func GetStudentGradesHandler(c *gin.Context, grpcClient protos.GradesServiceClient) {
 	studentId := c.Param("studentId")
 	courseId := c.Param("courseId")
+	klog.Info("here")
 
 	// Build gRPC request.
 	request := &protos.GetStudentCourseGradesRequest{
 		StudentId: studentId,
 		CourseId:  courseId,
 	}
-
 	// Call the gRPC server.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
