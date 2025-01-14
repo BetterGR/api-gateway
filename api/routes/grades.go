@@ -1,11 +1,12 @@
 package routes
 
 import (
+	"os"
+
 	"github.com/BetterGR/api-gateway/pkg/controllers"
 	"github.com/BetterGR/grades-microservice/protos"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
-	"os"
 )
 
 // InitiateGradesMicroservice initialize grades microservice

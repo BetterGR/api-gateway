@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/BetterGR/grades-microservice/protos"
 	"google.golang.org/grpc/credentials/insecure"
 	"k8s.io/klog/v2"
-	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -36,9 +37,9 @@ func GetStudentCourseGradesHandler(c *gin.Context, grpcClient protos.GradesServi
 	defer cancel()
 
 	response, err := grpcClient.GetStudentCourseGrades(ctx, request)
-	logger := klog.FromContext(ctx)
+
 	if err != nil {
-		logger.Info("Error calling gRPC Grades Microservice: %v", err)
+		klog.Errorf("Error calling gRPC Grades Microservice: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch grades"})
 
 		return
@@ -51,23 +52,25 @@ func GetStudentCourseGradesHandler(c *gin.Context, grpcClient protos.GradesServi
 // GetStudentGradesHandler handles REST requests and calls the gRPC Grades Microservice to return
 // all the student grades
 func GetStudentGradesHandler(c *gin.Context, grpcClient protos.GradesServiceClient) {
-	studentId := c.Param("studentId")
-	klog.Info("Student ID: %s", studentId)
+	// Log all parameters for debugging
+	klog.Infof("All params: %v", c.Params)
+
+	studentId := c.Param("student_id")
+	klog.Infof("Student ID from param: '%s'", studentId)
+
 	// Build gRPC request.
 	request := &protos.StudentId{StudentId: studentId}
+	klog.Infof("Request built with student ID: '%s'", request.StudentId)
 
 	// Call the gRPC server.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	response, err := grpcClient.GetStudentGrades(ctx, request)
-	logger := klog.FromContext(ctx)
 	if err != nil {
-		logger.Info("Error calling gRPC Grades Microservice: %v", err)
+		klog.Errorf("Error calling gRPC Grades Microservice: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch grades"})
-
 		return
 	}
 	c.JSON(http.StatusOK, response)
-
 }

@@ -4,61 +4,132 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/BetterGR/api-gateway/pkg/models"
-	"github.com/BetterGR/api-gateway/pkg/utils"
 	"io"
-	"k8s.io/klog/v2"
 	"net/http"
 	"net/url"
 	"os"
 
+	"github.com/BetterGR/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+	"k8s.io/klog/v2"
 )
+
+func extractUserInfo(tokenString string) (string, string, error) {
+	parser := jwt.Parser{
+		SkipClaimsValidation: true,
+	}
+
+	token, _, err := parser.ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return "", "", fmt.Errorf("failed to parse token: %v", err)
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", "", fmt.Errorf("invalid token claims")
+	}
+
+	// Debug log the claims
+	klog.Infof("Token claims: %+v", claims)
+
+	// Extract user ID from sub claim
+	userID, ok := claims["sub"].(string)
+	if !ok {
+		return "", "", fmt.Errorf("no user ID in token")
+	}
+
+	// Extract realm_access roles
+	realmAccess, ok := claims["realm_access"].(map[string]interface{})
+	if !ok {
+		return "", "", fmt.Errorf("no realm_access in token")
+	}
+
+	roles, ok := realmAccess["roles"].([]interface{})
+	if !ok || len(roles) == 0 {
+		return "", "", fmt.Errorf("no roles found in token")
+	}
+
+	// Get first role
+	role, ok := roles[0].(string)
+	if !ok {
+		return "", "", fmt.Errorf("invalid role format")
+	}
+
+	klog.Infof("Extracted userID: %s, role: %s", userID, role)
+	return role, userID, nil
+}
 
 // LoginHandler is the handler for the login route.
 func LoginHandler(c *gin.Context) {
-	var credentials models.LoginRequest
-	klog.Info("LoginHandler")
-	clientSecret := os.Getenv("CLIENT_SECRET")
-	utils.Debug("Client secret: %s", clientSecret)
+	// Add CORS headers
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "POST, OPTIONS")
+	c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-	if err := c.ShouldBindJSON(&credentials); err != nil {
-		utils.Debug("Invalid JSON input: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+	if c.Request.Method == "OPTIONS" {
+		c.AbortWithStatus(204)
 		return
 	}
 
-	// Keycloak configuration
+	var credentials models.LoginRequest
+	klog.Info("LoginHandler started")
+
+	clientSecret := os.Getenv("CLIENT_SECRET")
 	keycloakURL := os.Getenv("KEYCLOAK_URL")
+
+	// Debug environment variables
+	klog.Infof("Keycloak URL: %s", keycloakURL)
+	klog.Infof("Client Secret length: %d", len(clientSecret))
+
+	if err := c.ShouldBindJSON(&credentials); err != nil {
+		klog.Errorf("Invalid JSON input: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input format"})
+		return
+	}
+
+	// Log received credentials (password length only for security)
+	klog.Infof("Received credentials - Username: %s, Password length: %d",
+		credentials.Username, len(credentials.Password))
+
 	tokenURL := fmt.Sprintf("%s/realms/betterGR/protocol/openid-connect/token", keycloakURL)
 
-	utils.Debug("Attempting login for user: %s", credentials.Username)
-	utils.Debug("Token URL: %s", tokenURL)
-
-	// Prepare token request
 	data := url.Values{}
 	data.Set("grant_type", "password")
 	data.Set("client_id", "api-gateway")
 	data.Set("client_secret", clientSecret)
 	data.Set("username", credentials.Username)
 	data.Set("password", credentials.Password)
-	klog.Info(credentials.Username)
-	klog.Info(credentials.Password)
-	utils.Debug("Sending request with data: %+v", data)
+	data.Set("scope", "openid")
+
+	// Log request details
+	klog.Infof("Sending request to: %s", tokenURL)
+	klog.Infof("Request data: client_id=%s, username=%s, grant_type=password, scope=openid",
+		"api-gateway", credentials.Username)
 
 	resp, err := http.PostForm(tokenURL, data)
 	if err != nil {
-		utils.Debug("HTTP request failed: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Authentication failed"})
+		klog.Errorf("HTTP request failed: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Authentication request failed: %v", err)})
 		return
 	}
 	defer resp.Body.Close()
 
-	utils.Debug("Keycloak response status: %d", resp.StatusCode)
+	// Log response status
+	klog.Infof("Keycloak response status: %d", resp.StatusCode)
 
-	// Read and log the response body for debugging
-	body, _ := io.ReadAll(resp.Body)
-	utils.Debug("Response body: %s", string(body))
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		klog.Errorf("Failed to read response body: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read authentication response"})
+		return
+	}
+
+	// Log response body length and first few characters
+	klog.Infof("Response body length: %d", len(string(body)))
+	if len(string(body)) > 50 {
+		klog.Infof("Response body preview: %s...", string(body)[:50])
+	}
 
 	if resp.StatusCode != http.StatusOK {
 		var keycloakError struct {
@@ -75,11 +146,30 @@ func LoginHandler(c *gin.Context) {
 
 	var tokenResponse models.TokenResponse
 	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&tokenResponse); err != nil {
-		utils.Debug("Failed to decode token response: %v", err)
+		klog.Errorf("Failed to decode token response: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process response"})
 		return
 	}
 
-	utils.Debug("Login successful for user: %s", credentials.Username)
-	c.JSON(http.StatusOK, tokenResponse)
+	// Extract role and user ID from the token
+	role, userID, err := extractUserInfo(tokenResponse.AccessToken)
+	if err != nil {
+		klog.Errorf("Failed to extract user info from token: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process token"})
+		return
+	}
+
+	// Return the response in the exact format the frontend expects
+	response := gin.H{
+		"access_token":  tokenResponse.AccessToken,
+		"refresh_token": tokenResponse.RefreshToken,
+		"token_type":    tokenResponse.TokenType,
+		"expires_in":    tokenResponse.ExpiresIn,
+		"role":          role,
+		"user_id":       userID,
+		"username":      credentials.Username,
+	}
+
+	klog.Infof("Sending successful response for user: %s with role: %s and ID: %s", credentials.Username, role, userID)
+	c.JSON(http.StatusOK, response)
 }
