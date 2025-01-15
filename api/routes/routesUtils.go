@@ -11,6 +11,7 @@ import (
 // TODO: add the rest of the microservices.
 func RegisterMicroservices(router *gin.Engine) {
 	InitiateGradesMicroservice(router)
+	InitiateStudentsMicroservice(router)
 
 }
 
