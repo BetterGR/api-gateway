@@ -1,15 +1,24 @@
 module github.com/BetterGR/api-gateway
 
-replace github.com/BetterGR/api-gateway => C:\Users\diarb\OneDrive\Desktop\Courses\semester_6\BetterGr\api-gateway
+replace github.com/BetterGR/api-gateway => ../api-gateway
 
-replace github.com/BetterGR/grades-microservice => C:\Users\diarb\OneDrive\Desktop\Courses\semester_6\BetterGr\grades-microservice
+replace github.com/BetterGR/grades-microservice => ../grades-microservice
 
-replace github.com/BetterGR/students-microservice => C:\Users\diarb\OneDrive\Desktop\Courses\semester_6\BetterGr\students-microservice
+replace github.com/BetterGR/students-microservice => ../students-microservice
+
+replace github.com/BetterGR/course-microservice => ../course-microservice
+
+replace github.com/BetterGR/homework-microservice => ../homework-microservice
+
+replace github.com/BetterGR/staff-microservice => ../staff-microservice
 
 go 1.23.3
 
 require (
+	github.com/BetterGR/course-microservice v0.0.0-00010101000000-000000000000
 	github.com/BetterGR/grades-microservice v0.0.0-20241215152914-659c6f21ef47
+	github.com/BetterGR/homework-microservice v0.0.0-00010101000000-000000000000
+	github.com/BetterGR/staff-microservice v0.0.0-00010101000000-000000000000
 	github.com/BetterGR/students-microservice v0.0.0-20241222120755-422b00a5ce44
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible

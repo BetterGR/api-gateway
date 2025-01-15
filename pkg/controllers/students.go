@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/BetterGR/students-microservice/protos"
+	studentsProtos "github.com/BetterGR/students-microservice/protos"
 	"google.golang.org/grpc/credentials/insecure"
 	"k8s.io/klog/v2"
 
@@ -14,21 +14,21 @@ import (
 )
 
 // InitStudentsGRPCClient initializes the students-microservice gRPC client connection.
-func InitStudentsGRPCClient(address string) (protos.StudentsServiceClient, error) {
+func InitStudentsGRPCClient(address string) (studentsProtos.StudentsServiceClient, error) {
 	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
 
-	return protos.NewStudentsServiceClient(conn), nil
+	return studentsProtos.NewStudentsServiceClient(conn), nil
 }
 
 // GetStudentCourssHandler handles REST requests and calls the gRPC Students Microservice.
-func GetStudentCoursesHandler(c *gin.Context, grpcClient protos.StudentsServiceClient) {
+func GetStudentCoursesHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
 	klog.Info("Sabry")
 	studentId := c.Param("studentId")
 	// Build gRPC request.
-	request := &protos.GetStudentCoursesRequest{
+	request := &studentsProtos.GetStudentCoursesRequest{
 		Id: studentId,
 	}
 	// Call the gRPC server.
@@ -47,3 +47,24 @@ func GetStudentCoursesHandler(c *gin.Context, grpcClient protos.StudentsServiceC
 	// Send response to the client.
 	c.JSON(http.StatusOK, response.GetCourses())
 }
+
+func CreateStudentHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
+}
+
+func GetStudentHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
+}
+
+func UpdateStudentHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
+}
+
+func GetStudentGradesHandlerStudent(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
+}
+
+func DeleteStudentHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
+}
+

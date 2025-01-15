@@ -8,15 +8,15 @@ import (
 )
 
 // RegisterMicroservices registers the microservices.
-// TODO: add the rest of the microservices.
 func RegisterMicroservices(router *gin.Engine) {
 	InitiateGradesMicroservice(router)
 	InitiateStudentsMicroservice(router)
-
+	InitiateCoursesMicroservice(router)
+	InitiateHomeWorkMicroservice(router)
+	InitiateStaffMicroservice(router)
 }
 
 // RegisterUIServices registers the UI services.
-// TODO: move these to the relevant microservices.
 func RegisterUIServices(router *gin.Engine) {
 	router.POST("/api/login", middleware.LoginHandler)
 	router.GET("/api/dashboard", controllers.GetDashboardData)
