@@ -1,4 +1,4 @@
-package middleware
+package controllers
 
 import (
 	"bytes"
@@ -144,7 +144,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	var tokenResponse models.TokenResponse
+	var tokenResponse models.LoginResponse
 	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&tokenResponse); err != nil {
 		klog.Errorf("Failed to decode token response: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process response"})

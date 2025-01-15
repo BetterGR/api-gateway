@@ -1,0 +1,528 @@
+basePath: /api
+definitions:
+  models.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  models.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      role:
+        type: string
+      token_type:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  models.NotImplementedYet:
+    properties:
+      not implemented yet:
+        type: string
+    type: object
+host: localhost:1234
+info:
+  contact: {}
+  description: API Gateway for the BetterGR grading system
+  title: BetterGR API Gateway
+  version: "1.0"
+paths:
+  /api/courses:
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Create course (Not Implemented)
+      tags:
+      - Courses
+  /api/courses/{courseId}:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Delete course (Not Implemented)
+      tags:
+      - Courses
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get course details (Not Implemented)
+      tags:
+      - Courses
+    put:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Update course (Not Implemented)
+      tags:
+      - Courses
+  /api/courses/{courseId}/staff:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get course staff (Not Implemented)
+      tags:
+      - Courses
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Add staff to course (Not Implemented)
+      tags:
+      - Courses
+  /api/courses/{courseId}/staff/{staffId}:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Remove staff from course (Not Implemented)
+      tags:
+      - Courses
+  /api/courses/{courseId}/students:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get course students (Not Implemented)
+      tags:
+      - Courses
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Add student to course (Not Implemented)
+      tags:
+      - Courses
+  /api/courses/{courseId}/students/{studentId}:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Remove student from course (Not Implemented)
+      tags:
+      - Courses
+  /api/grades/{student_id}:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get all student grades (Not Implemented)
+      tags:
+      - Grades
+  /api/grades/{student_id}/{courseId}:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get student's course grades (Not Implemented)
+      tags:
+      - Grades
+  /api/grades/exam:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Delete exam grade (Not Implemented)
+      tags:
+      - Grades
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Add exam grade (Not Implemented)
+      tags:
+      - Grades
+    put:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Update exam grade (Not Implemented)
+      tags:
+      - Grades
+  /api/grades/homework:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Delete homework grade (Not Implemented)
+      tags:
+      - Grades
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Add homework grade (Not Implemented)
+      tags:
+      - Grades
+    put:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Update homework grade (Not Implemented)
+      tags:
+      - Grades
+  /api/homework:
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Create homework (Not Implemented)
+      tags:
+      - Homework
+  /api/homework/{courseId}:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get homework (Not Implemented)
+      tags:
+      - Homework
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and receive JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: User login
+      tags:
+      - Authentication
+  /api/staff:
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Create staff member (Not Implemented)
+      tags:
+      - Staff
+  /api/staff/{staffId}:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Delete staff member (Not Implemented)
+      tags:
+      - Staff
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get staff member (Not Implemented)
+      tags:
+      - Staff
+    put:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Update staff member (Not Implemented)
+      tags:
+      - Staff
+  /api/staff/{staffId}/courses:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get staff courses (Not Implemented)
+      tags:
+      - Staff
+  /api/students:
+    post:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Create new student (Not Implemented)
+      tags:
+      - Students
+  /api/students/{studentId}:
+    delete:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Delete student (Not Implemented)
+      tags:
+      - Students
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get student details (Not Implemented)
+      tags:
+      - Students
+    put:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Update student (Not Implemented)
+      tags:
+      - Students
+  /api/students/{studentId}/courses:
+    get:
+      consumes:
+      - application/json
+      description: Not implemented yet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.NotImplementedYet'
+      summary: Get student courses (Not Implemented)
+      tags:
+      - Students
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

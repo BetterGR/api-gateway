@@ -27,4 +27,3 @@ func GetHomeworkHandler(c *gin.Context, grpcClient homeworkProtos.HomeworkServic
 func CreateHomeworkHandler(c *gin.Context, grpcClient homeworkProtos.HomeworkServiceClient) {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
 }
-

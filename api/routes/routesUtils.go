@@ -18,7 +18,7 @@ func RegisterMicroservices(router *gin.Engine) {
 
 // RegisterUIServices registers the UI services.
 func RegisterUIServices(router *gin.Engine) {
-	router.POST("/api/login", middleware.LoginHandler)
+	router.POST("/api/login", controllers.LoginHandler)
 	router.GET("/api/dashboard", controllers.GetDashboardData)
 }
 
