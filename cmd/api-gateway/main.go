@@ -1,23 +1,30 @@
 package main
 
 import (
-	"github.com/BetterGR/api-gateway/api/routes"
-	_ "github.com/BetterGR/api-gateway/docs" // Required for swagger docs
+	"os"
+
+	routerApi "github.com/BetterGR/api-gateway/api/routes"
+
 	"github.com/gin-gonic/gin"
+	"k8s.io/klog/v2"
 )
 
-// @title BetterGR API Gateway
-// @version 1.0
-// @description API Gateway for the BetterGR grading system
-// @host localhost:1234
-// @BasePath /api
-// @securityDefinitions.apiKey Bearer
-// @in header
-// @name Authorization
+const (
+	address = "localhost:50051"
+)
+
 func main() {
-	router := gin.Default()
-
-	routes.SetupRoutes(router)
-
-	router.Run(":1234")
+	klog.InitFlags(nil)
+	defer klog.Flush()
+	// Get the port from the environment variable, default to 1234 if not set
+	port := os.Getenv("API_GATEWAY_PORT")
+	if port == "" {
+		klog.Fatalf("API_GATEWAY_PORT is not set")
+	}
+	router := gin.New()
+	routerApi.InitiateRoutes(router)
+	err := router.Run(":" + port)
+	if err != nil {
+		klog.Fatalf("Failed to start the server, %v", err)
+	}
 }

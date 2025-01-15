@@ -4,8 +4,6 @@ import (
 	_ "github.com/BetterGR/api-gateway/docs" // This is required for swagger docs
 	"github.com/BetterGR/api-gateway/pkg/controllers"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title BetterGR API Gateway
@@ -315,9 +313,3 @@ func updateStaffMember(c *gin.Context) {}
 // @Success 200 {object} models.NotImplementedYet
 // @Router /api/staff/{staffId} [delete]
 func deleteStaffMember(c *gin.Context) {}
-
-func SetupRoutes(router *gin.Engine) {
-	// Swagger documentation endpoint
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-}
