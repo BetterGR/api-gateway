@@ -6,6 +6,7 @@ set CLIENT_SECRET=**********
 set GRADES_ADDRESS=localhost:50051
 set STUDENTS_ADDRESS=localhost:50052
 set KEYCLOAK_URL=http://auth.BetterGR.org
+set REDIRECT_URI=http://localhost:3000/callback
 
 :: Run the API Gateway
 go run cmd\api-gateway\main.go

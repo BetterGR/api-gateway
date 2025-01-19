@@ -1,13 +1,14 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/BetterGR/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -29,9 +30,6 @@ func extractUserInfo(tokenString string) (string, string, error) {
 	if !ok {
 		return "", "", fmt.Errorf("invalid token claims")
 	}
-
-	// Debug log the claims
-	klog.Infof("Token claims: %+v", claims)
 
 	// Extract user ID from sub claim
 	userID, ok := claims["sub"].(string)
@@ -60,106 +58,51 @@ func extractUserInfo(tokenString string) (string, string, error) {
 	return role, userID, nil
 }
 
-// LoginHandler is the handler for the login route.
-func LoginHandler(c *gin.Context) {
+func HandleCallback(c *gin.Context) {
 	// Add CORS headers
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST, OPTIONS")
-	c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
 
 	if c.Request.Method == "OPTIONS" {
 		c.AbortWithStatus(204)
 		return
 	}
 
-	var credentials models.LoginRequest
-	klog.Info("LoginHandler started")
+	// Parse request body
+	var request struct {
+		Code        string `json:"code"`
+		RedirectURI string `json:"redirect_uri"`
+	}
 
-	clientSecret := os.Getenv("CLIENT_SECRET")
-	keycloakURL := os.Getenv("KEYCLOAK_URL")
-
-	// Debug environment variables
-	klog.Infof("Keycloak URL: %s", keycloakURL)
-	klog.Infof("Client Secret length: %d", len(clientSecret))
-
-	if err := c.ShouldBindJSON(&credentials); err != nil {
-		klog.Errorf("Invalid JSON input: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input format"})
+	if err := c.ShouldBindJSON(&request); err != nil {
+		klog.Errorf("Invalid request format: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}
 
-	// Log received credentials (password length only for security)
-	klog.Infof("Received credentials - Username: %s, Password length: %d",
-		credentials.Username, len(credentials.Password))
+	if request.Code == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No code provided"})
+		return
+	}
 
-	tokenURL := fmt.Sprintf("%s/realms/betterGR/protocol/openid-connect/token", keycloakURL)
-
-	data := url.Values{}
-	data.Set("grant_type", "password")
-	data.Set("client_id", "api-gateway")
-	data.Set("client_secret", clientSecret)
-	data.Set("username", credentials.Username)
-	data.Set("password", credentials.Password)
-	data.Set("scope", "openid")
-
-	// Log request details
-	klog.Infof("Sending request to: %s", tokenURL)
-	klog.Infof("Request data: client_id=%s, username=%s, grant_type=password, scope=openid",
-		"api-gateway", credentials.Username)
-
-	resp, err := http.PostForm(tokenURL, data)
+	// Exchange code for token
+	tokenResponse, err := exchangeCodeForToken(request.Code)
 	if err != nil {
-		klog.Errorf("HTTP request failed: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Authentication request failed: %v", err)})
-		return
-	}
-	defer resp.Body.Close()
-
-	// Log response status
-	klog.Infof("Keycloak response status: %d", resp.StatusCode)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		klog.Errorf("Failed to read response body: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read authentication response"})
+		klog.Errorf("Token exchange failed: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Log response body length and first few characters
-	klog.Infof("Response body length: %d", len(string(body)))
-	if len(string(body)) > 50 {
-		klog.Infof("Response body preview: %s...", string(body)[:50])
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		var keycloakError struct {
-			Error            string `json:"error"`
-			ErrorDescription string `json:"error_description"`
-		}
-		if err := json.NewDecoder(bytes.NewReader(body)).Decode(&keycloakError); err != nil {
-			c.JSON(resp.StatusCode, gin.H{"error": "Authentication failed"})
-			return
-		}
-		c.JSON(resp.StatusCode, gin.H{"error": keycloakError.ErrorDescription})
-		return
-	}
-
-	var tokenResponse models.LoginResponse
-	if err := json.NewDecoder(bytes.NewReader(body)).Decode(&tokenResponse); err != nil {
-		klog.Errorf("Failed to decode token response: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process response"})
-		return
-	}
-
-	// Extract role and user ID from the token
+	// Extract user info from token
 	role, userID, err := extractUserInfo(tokenResponse.AccessToken)
 	if err != nil {
-		klog.Errorf("Failed to extract user info from token: %v", err)
+		klog.Errorf("Failed to extract user info: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process token"})
 		return
 	}
 
-	// Return the response in the exact format the frontend expects
+	// Return the response
 	response := gin.H{
 		"access_token":  tokenResponse.AccessToken,
 		"refresh_token": tokenResponse.RefreshToken,
@@ -167,9 +110,115 @@ func LoginHandler(c *gin.Context) {
 		"expires_in":    tokenResponse.ExpiresIn,
 		"role":          role,
 		"user_id":       userID,
-		"username":      credentials.Username,
 	}
 
-	klog.Infof("Sending successful response for user: %s with role: %s and ID: %s", credentials.Username, role, userID)
+	klog.Infof("Token exchange successful for user ID: %s with role: %s", userID, role)
 	c.JSON(http.StatusOK, response)
+}
+
+// exchangeCodeForToken exchanges an authorization code for access and refresh tokens.
+// It sends a request to Keycloak with the code, client credentials, and redirect URI.
+// Returns the token response containing access_token, refresh_token and metadata,
+// or an error if the exchange fails.
+func exchangeCodeForToken(code string) (*models.LoginResponse, error) {
+	keycloakURL := os.Getenv("KEYCLOAK_URL")
+	clientSecret := os.Getenv("CLIENT_SECRET")
+	redirectURI := "http://localhost:3000/callback"
+
+	tokenURL := fmt.Sprintf("%s/realms/betterGR/protocol/openid-connect/token", keycloakURL)
+
+	data := url.Values{}
+	data.Set("grant_type", "authorization_code")
+	data.Set("client_id", "api-gateway")
+	data.Set("client_secret", clientSecret)
+	data.Set("code", code)
+	data.Set("redirect_uri", redirectURI)
+
+	resp, err := http.PostForm(tokenURL, data)
+	if err != nil {
+		return nil, fmt.Errorf("token request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("token request failed with status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var tokenResponse models.LoginResponse
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
+		return nil, fmt.Errorf("failed to decode token response: %v", err)
+	}
+
+	return &tokenResponse, nil
+}
+
+// verifyTokenInternal validates a token with Keycloak and returns user information
+func verifyTokenInternal(token string) (*models.TokenInfo, error) {
+	// Get Keycloak configuration
+	keycloakURL := os.Getenv("KEYCLOAK_URL")
+	clientID := "api-gateway"
+	clientSecret := os.Getenv("CLIENT_SECRET")
+
+	// Call Keycloak's token introspection endpoint
+	introspectURL := fmt.Sprintf("%s/realms/betterGR/protocol/openid-connect/token/introspect", keycloakURL)
+	data := url.Values{}
+	data.Set("token", token)
+	data.Set("client_id", clientID)
+	data.Set("client_secret", clientSecret)
+
+	req, err := http.NewRequest("POST", introspectURL, strings.NewReader(data.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create introspection request: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("token introspection request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	var introspectResponse struct {
+		Active   bool   `json:"active"`
+		Exp      int64  `json:"exp"`
+		Username string `json:"username"`
+		ClientID string `json:"client_id"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&introspectResponse); err != nil {
+		return nil, fmt.Errorf("failed to decode introspection response: %v", err)
+	}
+
+	// Check if token is active
+	if !introspectResponse.Active {
+		return nil, fmt.Errorf("token is inactive")
+	}
+
+	// Verify token expiration
+	if time.Now().Unix() > introspectResponse.Exp {
+		return nil, fmt.Errorf("token has expired")
+	}
+
+	// Verify client ID
+	if introspectResponse.ClientID != clientID {
+		return nil, fmt.Errorf("invalid client ID")
+	}
+
+	// Extract additional user info from token
+	role, userID, err := extractUserInfo(token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract user info: %v", err)
+	}
+
+	// Return token info
+	return &models.TokenInfo{
+		Active:    true,
+		Username:  introspectResponse.Username,
+		Role:      role,
+		UserID:    userID,
+		ExpiresAt: introspectResponse.Exp,
+	}, nil
 }

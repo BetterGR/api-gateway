@@ -12,7 +12,7 @@ import (
 // InitiateStaffMicroservice initialize staff microservice
 func InitiateStaffMicroservice(router *gin.Engine) {
 	_, err := RegisterStaffRoutes(router)
-	if (err != nil) {
+	if err != nil {
 		klog.Fatalf("Failed to register staff routes, %v", err)
 	}
 }

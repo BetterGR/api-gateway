@@ -28,7 +28,7 @@ import (
 // @Failure 500 {object} models.ErrorResponse
 // @Router /api/login [post]
 func login(c *gin.Context) {
-	controllers.LoginHandler(c)
+	controllers.HandleCallback(c)
 }
 
 // @Summary Get dashboard data
