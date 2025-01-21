@@ -129,7 +129,7 @@ func exchangeCodeForToken(code string) (*models.LoginResponse, error) {
 
 	data := url.Values{}
 	data.Set("grant_type", "authorization_code")
-	data.Set("client_id", "api-gateway")
+	data.Set("client_id", "account")
 	data.Set("client_secret", clientSecret)
 	data.Set("code", code)
 	data.Set("redirect_uri", redirectURI)
@@ -157,7 +157,7 @@ func exchangeCodeForToken(code string) (*models.LoginResponse, error) {
 func verifyTokenInternal(token string) (*models.TokenInfo, error) {
 	// Get Keycloak configuration
 	keycloakURL := os.Getenv("KEYCLOAK_URL")
-	clientID := "api-gateway"
+	clientID := "account"
 	clientSecret := os.Getenv("CLIENT_SECRET")
 
 	// Call Keycloak's token introspection endpoint

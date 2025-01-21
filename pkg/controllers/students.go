@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	studentsProtos "github.com/BetterGR/students-microservice/protos"
@@ -25,16 +26,24 @@ func InitStudentsGRPCClient(address string) (studentsProtos.StudentsServiceClien
 
 // GetStudentCourssHandler handles REST requests and calls the gRPC Students Microservice.
 func GetStudentCoursesHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
-	klog.Info("Sabry")
+	// Extract token from Authorization header
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization token provided"})
+		return
+	}
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+
 	studentId := c.Param("studentId")
-	// Build gRPC request.
+	// Build gRPC request with token
 	request := &studentsProtos.GetStudentCoursesRequest{
-		Id: studentId,
+		Token: token, // Add token as the first field
+		Id:    studentId,
 	}
 	// Call the gRPC server.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-
+	klog.Infof("making request for student courses")
 	response, err := grpcClient.GetStudentCourses(ctx, request)
 
 	if err != nil {
@@ -67,4 +76,3 @@ func GetStudentGradesHandlerStudent(c *gin.Context, grpcClient studentsProtos.St
 func DeleteStudentHandler(c *gin.Context, grpcClient studentsProtos.StudentsServiceClient) {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
 }
-
