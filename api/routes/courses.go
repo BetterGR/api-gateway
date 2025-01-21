@@ -31,7 +31,7 @@ func RegisterCoursesRoutes(router *gin.Engine) (courseProtos.CourseServiceClient
 		controllers.GetCourseHandler(c, grpcClient)
 	})
 
-	router.GET("/api/courses/:courseId/announcement", func(c *gin.Context) {
+	router.GET("/api/courses/:courseId/announcements", func(c *gin.Context) {
 		controllers.GetAnnouncementHandler(c, grpcClient)
 	})
 
