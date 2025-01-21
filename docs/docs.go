@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/courses": {
             "post": {
-                "description": "Not implemented yet",
+                "description": "Create a new course",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,12 +27,23 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Create course (Not Implemented)",
+                "summary": "Create course",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.createCourseRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.createCourseResponse"
                         }
                     }
                 }
@@ -40,7 +51,7 @@ const docTemplate = `{
         },
         "/api/courses/{courseId}": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get details for a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -50,18 +61,27 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Get course details (Not Implemented)",
+                "summary": "Get course details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getCourseResponse"
                         }
                     }
                 }
             },
             "put": {
-                "description": "Not implemented yet",
+                "description": "Update a course's information",
                 "consumes": [
                     "application/json"
                 ],
@@ -71,18 +91,36 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Update course (Not Implemented)",
+                "summary": "Update course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.updateCourseRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.updateCourseResponse"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Delete a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -92,12 +130,21 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Delete course (Not Implemented)",
+                "summary": "Delete course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.deleteCourseResponse"
                         }
                     }
                 }
@@ -105,7 +152,7 @@ const docTemplate = `{
         },
         "/api/courses/{courseId}/staff": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get all staff members for a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -115,18 +162,27 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Get course staff (Not Implemented)",
+                "summary": "Get course staff",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getCourseStaffResponse"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Not implemented yet",
+                "description": "Add a staff member to a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -136,12 +192,30 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Add staff to course (Not Implemented)",
+                "summary": "Add staff to course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.addStaffToCourseRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.addStaffToCourseResponse"
                         }
                     }
                 }
@@ -149,7 +223,7 @@ const docTemplate = `{
         },
         "/api/courses/{courseId}/staff/{staffId}": {
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Remove a staff member from a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -159,12 +233,28 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Remove staff from course (Not Implemented)",
+                "summary": "Remove staff from course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "staffId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.removeStaffFromCourseResponse"
                         }
                     }
                 }
@@ -172,7 +262,7 @@ const docTemplate = `{
         },
         "/api/courses/{courseId}/students": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get all students for a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -182,18 +272,27 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Get course students (Not Implemented)",
+                "summary": "Get course students",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getCourseStudentsResponse"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Not implemented yet",
+                "description": "Add a student to a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -203,12 +302,30 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Add student to course (Not Implemented)",
+                "summary": "Add student to course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.addStudentToCourseRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.addStudentToCourseResponse"
                         }
                     }
                 }
@@ -216,7 +333,7 @@ const docTemplate = `{
         },
         "/api/courses/{courseId}/students/{studentId}": {
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Remove a student from a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -226,12 +343,60 @@ const docTemplate = `{
                 "tags": [
                     "Courses"
                 ],
-                "summary": "Remove student from course (Not Implemented)",
+                "summary": "Remove student from course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.removeStudentFromCourseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/grades/course/{courseId}": {
+            "get": {
+                "description": "Get a specific course grade for a student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Grades"
+                ],
+                "summary": "Get course grade for a student",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.getStudentCourseGradeResponse"
                         }
                     }
                 }
@@ -239,7 +404,7 @@ const docTemplate = `{
         },
         "/api/grades/exam": {
             "put": {
-                "description": "Not implemented yet",
+                "description": "Update an exam grade",
                 "consumes": [
                     "application/json"
                 ],
@@ -249,18 +414,29 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Update exam grade (Not Implemented)",
+                "summary": "Update exam grade",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.updateExamGradeRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.updateExamGradeResponse"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Not implemented yet",
+                "description": "Add an exam grade",
                 "consumes": [
                     "application/json"
                 ],
@@ -270,18 +446,29 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Add exam grade (Not Implemented)",
+                "summary": "Add exam grade",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.addExamGradeRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.addExamGradeResponse"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Delete an exam grade",
                 "consumes": [
                     "application/json"
                 ],
@@ -291,12 +478,55 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Delete exam grade (Not Implemented)",
+                "summary": "Delete exam grade",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.deleteExamGradeRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.deleteExamGradeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/grades/exam/{examId}": {
+            "get": {
+                "description": "Get a specific exam grade for a student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Grades"
+                ],
+                "summary": "Get exam grade",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Exam ID",
+                        "name": "examId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.getExamGradeResponse"
                         }
                     }
                 }
@@ -304,7 +534,7 @@ const docTemplate = `{
         },
         "/api/grades/homework": {
             "put": {
-                "description": "Not implemented yet",
+                "description": "Update a homework grade",
                 "consumes": [
                     "application/json"
                 ],
@@ -314,18 +544,29 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Update homework grade (Not Implemented)",
+                "summary": "Update homework grade",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.updateHomeworkGradeRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.updateHomeworkGradeResponse"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Not implemented yet",
+                "description": "Add a homework grade",
                 "consumes": [
                     "application/json"
                 ],
@@ -335,18 +576,29 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Add homework grade (Not Implemented)",
+                "summary": "Add homework grade",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.addHomeworkGradeRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.addHomeworkGradeResponse"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Delete a homework grade",
                 "consumes": [
                     "application/json"
                 ],
@@ -356,12 +608,55 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Delete homework grade (Not Implemented)",
+                "summary": "Delete homework grade",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.deleteHomeworkGradeRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.deleteHomeworkGradeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/grades/homework/{homeworkId}": {
+            "get": {
+                "description": "Get a specific homework grade for a student",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Grades"
+                ],
+                "summary": "Get homework grade",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Homework ID",
+                        "name": "homeworkId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.getHomeworkGradeResponse"
                         }
                     }
                 }
@@ -369,7 +664,7 @@ const docTemplate = `{
         },
         "/api/grades/{student_id}": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get all grades for a student",
                 "consumes": [
                     "application/json"
                 ],
@@ -379,7 +674,16 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Get all student grades (Not Implemented)",
+                "summary": "Get all student grades",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -392,7 +696,7 @@ const docTemplate = `{
         },
         "/api/grades/{student_id}/{courseId}": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get grades for a student's course",
                 "consumes": [
                     "application/json"
                 ],
@@ -402,12 +706,28 @@ const docTemplate = `{
                 "tags": [
                     "Grades"
                 ],
-                "summary": "Get student's course grades (Not Implemented)",
+                "summary": "Get student's course grades",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getStudentCourseGradesResponse"
                         }
                     }
                 }
@@ -415,7 +735,7 @@ const docTemplate = `{
         },
         "/api/homework": {
             "post": {
-                "description": "Not implemented yet",
+                "description": "Create a new homework",
                 "consumes": [
                     "application/json"
                 ],
@@ -425,12 +745,23 @@ const docTemplate = `{
                 "tags": [
                     "Homework"
                 ],
-                "summary": "Create homework (Not Implemented)",
+                "summary": "Create homework",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.createHomeworkRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.createHomeworkResponse"
                         }
                     }
                 }
@@ -438,7 +769,7 @@ const docTemplate = `{
         },
         "/api/homework/{courseId}": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get homework for a course",
                 "consumes": [
                     "application/json"
                 ],
@@ -448,12 +779,21 @@ const docTemplate = `{
                 "tags": [
                     "Homework"
                 ],
-                "summary": "Get homework (Not Implemented)",
+                "summary": "Get homework",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course ID",
+                        "name": "courseId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getHomeworkResponse"
                         }
                     }
                 }
@@ -513,7 +853,7 @@ const docTemplate = `{
         },
         "/api/staff": {
             "post": {
-                "description": "Not implemented yet",
+                "description": "Create a new staff member",
                 "consumes": [
                     "application/json"
                 ],
@@ -523,12 +863,23 @@ const docTemplate = `{
                 "tags": [
                     "Staff"
                 ],
-                "summary": "Create staff member (Not Implemented)",
+                "summary": "Create staff member",
+                "parameters": [
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.createStaffMemberRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.createStaffMemberResponse"
                         }
                     }
                 }
@@ -536,7 +887,7 @@ const docTemplate = `{
         },
         "/api/staff/{staffId}": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get details for a staff member",
                 "consumes": [
                     "application/json"
                 ],
@@ -546,18 +897,27 @@ const docTemplate = `{
                 "tags": [
                     "Staff"
                 ],
-                "summary": "Get staff member (Not Implemented)",
+                "summary": "Get staff member",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "staffId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getStaffMemberResponse"
                         }
                     }
                 }
             },
             "put": {
-                "description": "Not implemented yet",
+                "description": "Update a staff member's information",
                 "consumes": [
                     "application/json"
                 ],
@@ -567,18 +927,36 @@ const docTemplate = `{
                 "tags": [
                     "Staff"
                 ],
-                "summary": "Update staff member (Not Implemented)",
+                "summary": "Update staff member",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "staffId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.updateStaffMemberRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.updateStaffMemberResponse"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Delete a staff member",
                 "consumes": [
                     "application/json"
                 ],
@@ -588,12 +966,21 @@ const docTemplate = `{
                 "tags": [
                     "Staff"
                 ],
-                "summary": "Delete staff member (Not Implemented)",
+                "summary": "Delete staff member",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "staffId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.deleteStaffMemberResponse"
                         }
                     }
                 }
@@ -601,7 +988,7 @@ const docTemplate = `{
         },
         "/api/staff/{staffId}/courses": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get all courses for a staff member",
                 "consumes": [
                     "application/json"
                 ],
@@ -611,12 +998,21 @@ const docTemplate = `{
                 "tags": [
                     "Staff"
                 ],
-                "summary": "Get staff courses (Not Implemented)",
+                "summary": "Get staff courses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "staffId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getStaffCoursesResponse"
                         }
                     }
                 }
@@ -624,7 +1020,7 @@ const docTemplate = `{
         },
         "/api/students": {
             "post": {
-                "description": "Not implemented yet",
+                "description": "Create a new student",
                 "consumes": [
                     "application/json"
                 ],
@@ -634,12 +1030,23 @@ const docTemplate = `{
                 "tags": [
                     "Students"
                 ],
-                "summary": "Create new student (Not Implemented)",
+                "summary": "Create new student",
+                "parameters": [
+                    {
+                        "description": "Student data",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.createStudentRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.createStudentResponse"
                         }
                     }
                 }
@@ -647,7 +1054,7 @@ const docTemplate = `{
         },
         "/api/students/{studentId}": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get details for a student",
                 "consumes": [
                     "application/json"
                 ],
@@ -657,18 +1064,27 @@ const docTemplate = `{
                 "tags": [
                     "Students"
                 ],
-                "summary": "Get student details (Not Implemented)",
+                "summary": "Get student details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getStudentResponse"
                         }
                     }
                 }
             },
             "put": {
-                "description": "Not implemented yet",
+                "description": "Update a student's information",
                 "consumes": [
                     "application/json"
                 ],
@@ -678,18 +1094,36 @@ const docTemplate = `{
                 "tags": [
                     "Students"
                 ],
-                "summary": "Update student (Not Implemented)",
+                "summary": "Update student",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Student ID",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.updateStudentRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.updateStudentResponse"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Not implemented yet",
+                "description": "Delete a student",
                 "consumes": [
                     "application/json"
                 ],
@@ -699,12 +1133,21 @@ const docTemplate = `{
                 "tags": [
                     "Students"
                 ],
-                "summary": "Delete student (Not Implemented)",
+                "summary": "Delete student",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.deleteStudentResponse"
                         }
                     }
                 }
@@ -712,7 +1155,7 @@ const docTemplate = `{
         },
         "/api/students/{studentId}/courses": {
             "get": {
-                "description": "Not implemented yet",
+                "description": "Get all courses for a student",
                 "consumes": [
                     "application/json"
                 ],
@@ -722,12 +1165,21 @@ const docTemplate = `{
                 "tags": [
                     "Students"
                 ],
-                "summary": "Get student courses (Not Implemented)",
+                "summary": "Get student courses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Student ID",
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.NotImplementedYet"
+                            "$ref": "#/definitions/models.getStudentCoursesResponse"
                         }
                     }
                 }
@@ -735,6 +1187,36 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Course": {
+            "type": "object",
+            "required": [
+                "name",
+                "teacherId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "students": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "teacherId": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -745,6 +1227,84 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Grade": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "score",
+                "student_id"
+            ],
+            "properties": {
+                "comments": {
+                    "type": "string"
+                },
+                "course_id": {
+                    "type": "string"
+                },
+                "graded_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GradeSubmission": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "score",
+                "student_id"
+            ],
+            "properties": {
+                "comments": {
+                    "type": "string"
+                },
+                "course_id": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "number"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Homework": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "due_date",
+                "title"
+            ],
+            "properties": {
+                "course_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -773,19 +1333,16 @@ const docTemplate = `{
                 "expires_in": {
                     "type": "integer"
                 },
+                "refresh_expires_in": {
+                    "type": "integer"
+                },
                 "refresh_token": {
                     "type": "string"
                 },
-                "role": {
+                "scope": {
                     "type": "string"
                 },
                 "token_type": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                },
-                "username": {
                     "type": "string"
                 }
             }
@@ -795,6 +1352,570 @@ const docTemplate = `{
             "properties": {
                 "not implemented yet": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Staff": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "role"
+            ],
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Course"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Student": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name"
+            ],
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Course"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.addExamGradeRequest": {
+            "type": "object",
+            "required": [
+                "exam_id",
+                "grade_submission"
+            ],
+            "properties": {
+                "exam_id": {
+                    "type": "string"
+                },
+                "grade_submission": {
+                    "$ref": "#/definitions/models.GradeSubmission"
+                }
+            }
+        },
+        "models.addExamGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.addHomeworkGradeRequest": {
+            "type": "object",
+            "required": [
+                "grade_submission",
+                "homework_id"
+            ],
+            "properties": {
+                "grade_submission": {
+                    "$ref": "#/definitions/models.GradeSubmission"
+                },
+                "homework_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.addHomeworkGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.addStaffToCourseRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "staffId"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "staffId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.addStaffToCourseResponse": {
+            "type": "object"
+        },
+        "models.addStudentToCourseRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "studentId"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "studentId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.addStudentToCourseResponse": {
+            "type": "object"
+        },
+        "models.createCourseRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "teacherId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "teacherId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.createCourseResponse": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "$ref": "#/definitions/models.Course"
+                }
+            }
+        },
+        "models.createHomeworkRequest": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "due_date",
+                "homework_id",
+                "title"
+            ],
+            "properties": {
+                "course_id": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "homework_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.createHomeworkResponse": {
+            "type": "object",
+            "properties": {
+                "homework": {
+                    "$ref": "#/definitions/models.Homework"
+                }
+            }
+        },
+        "models.createStaffMemberRequest": {
+            "type": "object",
+            "properties": {
+                "staff": {
+                    "$ref": "#/definitions/models.Staff"
+                }
+            }
+        },
+        "models.createStaffMemberResponse": {
+            "type": "object",
+            "properties": {
+                "staff": {
+                    "$ref": "#/definitions/models.Staff"
+                }
+            }
+        },
+        "models.createStudentRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "id",
+                "last_name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.createStudentResponse": {
+            "type": "object",
+            "properties": {
+                "student": {
+                    "$ref": "#/definitions/models.Student"
+                }
+            }
+        },
+        "models.deleteCourseResponse": {
+            "type": "object"
+        },
+        "models.deleteExamGradeRequest": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "exam_id",
+                "student_id"
+            ],
+            "properties": {
+                "course_id": {
+                    "type": "string"
+                },
+                "exam_id": {
+                    "type": "string"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.deleteExamGradeResponse": {
+            "type": "object"
+        },
+        "models.deleteHomeworkGradeRequest": {
+            "type": "object",
+            "required": [
+                "course_id",
+                "homework_id",
+                "student_id"
+            ],
+            "properties": {
+                "course_id": {
+                    "type": "string"
+                },
+                "homework_id": {
+                    "type": "string"
+                },
+                "student_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.deleteHomeworkGradeResponse": {
+            "type": "object"
+        },
+        "models.deleteStaffMemberResponse": {
+            "type": "object"
+        },
+        "models.deleteStudentResponse": {
+            "type": "object"
+        },
+        "models.getCourseResponse": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "$ref": "#/definitions/models.Course"
+                }
+            }
+        },
+        "models.getCourseStaffResponse": {
+            "type": "object",
+            "properties": {
+                "staff": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.getCourseStudentsResponse": {
+            "type": "object",
+            "properties": {
+                "students": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.getExamGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.getHomeworkGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.getHomeworkResponse": {
+            "type": "object",
+            "properties": {
+                "homework": {
+                    "$ref": "#/definitions/models.Homework"
+                }
+            }
+        },
+        "models.getStaffCoursesResponse": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Course"
+                    }
+                }
+            }
+        },
+        "models.getStaffMemberResponse": {
+            "type": "object",
+            "properties": {
+                "staff": {
+                    "$ref": "#/definitions/models.Staff"
+                }
+            }
+        },
+        "models.getStudentCourseGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.getStudentCourseGradesResponse": {
+            "type": "object",
+            "properties": {
+                "course_id": {
+                    "type": "string"
+                },
+                "grades": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Grade"
+                    }
+                }
+            }
+        },
+        "models.getStudentCoursesResponse": {
+            "type": "object",
+            "properties": {
+                "courses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Course"
+                    }
+                }
+            }
+        },
+        "models.getStudentResponse": {
+            "type": "object",
+            "properties": {
+                "student": {
+                    "$ref": "#/definitions/models.Student"
+                }
+            }
+        },
+        "models.removeStaffFromCourseResponse": {
+            "type": "object"
+        },
+        "models.removeStudentFromCourseResponse": {
+            "type": "object"
+        },
+        "models.updateCourseRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "teacherId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "teacherId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.updateCourseResponse": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "$ref": "#/definitions/models.Course"
+                }
+            }
+        },
+        "models.updateExamGradeRequest": {
+            "type": "object",
+            "required": [
+                "exam_id",
+                "grade_submission"
+            ],
+            "properties": {
+                "exam_id": {
+                    "type": "string"
+                },
+                "grade_submission": {
+                    "$ref": "#/definitions/models.GradeSubmission"
+                }
+            }
+        },
+        "models.updateExamGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.updateHomeworkGradeRequest": {
+            "type": "object",
+            "required": [
+                "grade_submission",
+                "homework_id"
+            ],
+            "properties": {
+                "grade_submission": {
+                    "$ref": "#/definitions/models.GradeSubmission"
+                },
+                "homework_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.updateHomeworkGradeResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "$ref": "#/definitions/models.Grade"
+                }
+            }
+        },
+        "models.updateStaffMemberRequest": {
+            "type": "object",
+            "properties": {
+                "staff": {
+                    "$ref": "#/definitions/models.Staff"
+                }
+            }
+        },
+        "models.updateStaffMemberResponse": {
+            "type": "object",
+            "properties": {
+                "staff": {
+                    "$ref": "#/definitions/models.Staff"
+                }
+            }
+        },
+        "models.updateStudentRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "id",
+                "last_name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.updateStudentResponse": {
+            "type": "object",
+            "properties": {
+                "student": {
+                    "$ref": "#/definitions/models.Student"
                 }
             }
         }
@@ -812,10 +1933,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:1234",
-	BasePath:         "/api",
-	Schemes:          []string{},
+	BasePath:         "/",
+	Schemes:          []string{"http"},
 	Title:            "BetterGR API Gateway",
-	Description:      "API Gateway for the BetterGR grading system",
+	Description:      "Learning Management System API Gateway",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
