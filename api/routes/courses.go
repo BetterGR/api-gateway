@@ -65,6 +65,9 @@ func RegisterCoursesRoutes(router *gin.Engine) (courseProtos.CourseServiceClient
 	router.POST("/api/courses/:courseId/homework", func(c *gin.Context) {
 		controllers.AddHomeworkHandler(c, grpcClient)
 	})
+	router.GET("/api/courses/:courseId/homework/:homeworkId", func(c *gin.Context) {
+		controllers.GetHomeworkHandler(c, grpcClient)
+	})
 	router.DELETE("/api/courses/:courseId/homework/:homeworkId", func(c *gin.Context) {
 		controllers.RemoveHomeworkHandler(c, grpcClient)
 	})

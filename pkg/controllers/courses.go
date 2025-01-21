@@ -43,6 +43,35 @@ func GetAnnouncementHandler(c *gin.Context, client courseProtos.CourseServiceCli
 	})
 }
 
+func GetHomeworkHandler(c *gin.Context, client courseProtos.CourseServiceClient) {
+    courseID := c.Param("courseId")
+    homeworkID := c.Param("homeworkId")
+
+    // Create the gRPC request
+    req := &courseProtos.GetHomeworkRequest{
+        CourseId:   courseID,
+        HomeworkId: homeworkID,
+    }
+
+    // Call the gRPC GetHomework method
+    resp, err := client.GetHomework(context.Background(), req)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": fmt.Sprintf("Failed to fetch homework: %v", err),
+        })
+        return
+    }
+
+    // Return the homework details as JSON response
+    c.JSON(http.StatusOK, gin.H{
+        "course_id":     resp.CourseId,
+        "homework_id":   resp.HomeworkId,
+        "title":         resp.Title,
+        "description":   resp.Description,
+        "due_date":      resp.DueDate,
+    })
+}
+
 func GetCourseHandler(c *gin.Context, grpcClient courseProtos.CourseServiceClient) {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
 }
