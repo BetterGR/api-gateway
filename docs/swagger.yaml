@@ -1,5 +1,25 @@
-basePath: /api
+basePath: /
 definitions:
+  models.Course:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      name:
+        type: string
+      students:
+        items:
+          type: string
+        type: array
+      teacherId:
+        type: string
+    required:
+    - name
+    - teacherId
+    type: object
   models.ErrorResponse:
     properties:
       code:
@@ -8,6 +28,59 @@ definitions:
         type: string
       message:
         type: string
+    type: object
+  models.Grade:
+    properties:
+      comments:
+        type: string
+      course_id:
+        type: string
+      graded_at:
+        type: string
+      id:
+        type: string
+      score:
+        type: number
+      student_id:
+        type: string
+    required:
+    - course_id
+    - score
+    - student_id
+    type: object
+  models.GradeSubmission:
+    properties:
+      comments:
+        type: string
+      course_id:
+        type: string
+      score:
+        type: number
+      student_id:
+        type: string
+    required:
+    - course_id
+    - score
+    - student_id
+    type: object
+  models.Homework:
+    properties:
+      course_id:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    required:
+    - course_id
+    - due_date
+    - title
     type: object
   models.LoginRequest:
     properties:
@@ -25,15 +98,13 @@ definitions:
         type: string
       expires_in:
         type: integer
+      refresh_expires_in:
+        type: integer
       refresh_token:
         type: string
-      role:
+      scope:
         type: string
       token_type:
-        type: string
-      user_id:
-        type: string
-      username:
         type: string
     type: object
   models.NotImplementedYet:
@@ -41,10 +112,382 @@ definitions:
       not implemented yet:
         type: string
     type: object
+  models.Staff:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/models.Course'
+        type: array
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - role
+    type: object
+  models.Student:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/models.Course'
+        type: array
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    type: object
+  models.addExamGradeRequest:
+    properties:
+      exam_id:
+        type: string
+      grade_submission:
+        $ref: '#/definitions/models.GradeSubmission'
+    required:
+    - exam_id
+    - grade_submission
+    type: object
+  models.addExamGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.addHomeworkGradeRequest:
+    properties:
+      grade_submission:
+        $ref: '#/definitions/models.GradeSubmission'
+      homework_id:
+        type: string
+    required:
+    - grade_submission
+    - homework_id
+    type: object
+  models.addHomeworkGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.addStaffToCourseRequest:
+    properties:
+      id:
+        type: string
+      staffId:
+        type: string
+    required:
+    - id
+    - staffId
+    type: object
+  models.addStaffToCourseResponse:
+    type: object
+  models.addStudentToCourseRequest:
+    properties:
+      id:
+        type: string
+      studentId:
+        type: string
+    required:
+    - id
+    - studentId
+    type: object
+  models.addStudentToCourseResponse:
+    type: object
+  models.createCourseRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      name:
+        type: string
+      teacherId:
+        type: string
+    required:
+    - id
+    - name
+    - teacherId
+    type: object
+  models.createCourseResponse:
+    properties:
+      course:
+        $ref: '#/definitions/models.Course'
+    type: object
+  models.createHomeworkRequest:
+    properties:
+      course_id:
+        type: string
+      description:
+        type: string
+      due_date:
+        type: string
+      homework_id:
+        type: string
+      title:
+        type: string
+    required:
+    - course_id
+    - due_date
+    - homework_id
+    - title
+    type: object
+  models.createHomeworkResponse:
+    properties:
+      homework:
+        $ref: '#/definitions/models.Homework'
+    type: object
+  models.createStaffMemberRequest:
+    properties:
+      staff:
+        $ref: '#/definitions/models.Staff'
+    type: object
+  models.createStaffMemberResponse:
+    properties:
+      staff:
+        $ref: '#/definitions/models.Staff'
+    type: object
+  models.createStudentRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+    required:
+    - email
+    - first_name
+    - id
+    - last_name
+    type: object
+  models.createStudentResponse:
+    properties:
+      student:
+        $ref: '#/definitions/models.Student'
+    type: object
+  models.deleteCourseResponse:
+    type: object
+  models.deleteExamGradeRequest:
+    properties:
+      course_id:
+        type: string
+      exam_id:
+        type: string
+      student_id:
+        type: string
+    required:
+    - course_id
+    - exam_id
+    - student_id
+    type: object
+  models.deleteExamGradeResponse:
+    type: object
+  models.deleteHomeworkGradeRequest:
+    properties:
+      course_id:
+        type: string
+      homework_id:
+        type: string
+      student_id:
+        type: string
+    required:
+    - course_id
+    - homework_id
+    - student_id
+    type: object
+  models.deleteHomeworkGradeResponse:
+    type: object
+  models.deleteStaffMemberResponse:
+    type: object
+  models.deleteStudentResponse:
+    type: object
+  models.getCourseResponse:
+    properties:
+      course:
+        $ref: '#/definitions/models.Course'
+    type: object
+  models.getCourseStaffResponse:
+    properties:
+      staff:
+        items:
+          type: string
+        type: array
+    type: object
+  models.getCourseStudentsResponse:
+    properties:
+      students:
+        items:
+          type: string
+        type: array
+    type: object
+  models.getExamGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.getHomeworkGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.getHomeworkResponse:
+    properties:
+      homework:
+        $ref: '#/definitions/models.Homework'
+    type: object
+  models.getStaffCoursesResponse:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/models.Course'
+        type: array
+    type: object
+  models.getStaffMemberResponse:
+    properties:
+      staff:
+        $ref: '#/definitions/models.Staff'
+    type: object
+  models.getStudentCourseGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.getStudentCourseGradesResponse:
+    properties:
+      course_id:
+        type: string
+      grades:
+        items:
+          $ref: '#/definitions/models.Grade'
+        type: array
+    type: object
+  models.getStudentCoursesResponse:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/models.Course'
+        type: array
+    type: object
+  models.getStudentResponse:
+    properties:
+      student:
+        $ref: '#/definitions/models.Student'
+    type: object
+  models.removeStaffFromCourseResponse:
+    type: object
+  models.removeStudentFromCourseResponse:
+    type: object
+  models.updateCourseRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      name:
+        type: string
+      teacherId:
+        type: string
+    required:
+    - id
+    - name
+    - teacherId
+    type: object
+  models.updateCourseResponse:
+    properties:
+      course:
+        $ref: '#/definitions/models.Course'
+    type: object
+  models.updateExamGradeRequest:
+    properties:
+      exam_id:
+        type: string
+      grade_submission:
+        $ref: '#/definitions/models.GradeSubmission'
+    required:
+    - exam_id
+    - grade_submission
+    type: object
+  models.updateExamGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.updateHomeworkGradeRequest:
+    properties:
+      grade_submission:
+        $ref: '#/definitions/models.GradeSubmission'
+      homework_id:
+        type: string
+    required:
+    - grade_submission
+    - homework_id
+    type: object
+  models.updateHomeworkGradeResponse:
+    properties:
+      grade:
+        $ref: '#/definitions/models.Grade'
+    type: object
+  models.updateStaffMemberRequest:
+    properties:
+      staff:
+        $ref: '#/definitions/models.Staff'
+    type: object
+  models.updateStaffMemberResponse:
+    properties:
+      staff:
+        $ref: '#/definitions/models.Staff'
+    type: object
+  models.updateStudentRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+    required:
+    - email
+    - first_name
+    - id
+    - last_name
+    type: object
+  models.updateStudentResponse:
+    properties:
+      student:
+        $ref: '#/definitions/models.Student'
+    type: object
 host: localhost:1234
 info:
   contact: {}
-  description: API Gateway for the BetterGR grading system
+  description: Learning Management System API Gateway
   title: BetterGR API Gateway
   version: "1.0"
 paths:
@@ -52,153 +495,248 @@ paths:
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Create a new course
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.createCourseRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Create course (Not Implemented)
+            $ref: '#/definitions/models.createCourseResponse'
+      summary: Create course
       tags:
       - Courses
   /api/courses/{courseId}:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Delete a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Delete course (Not Implemented)
+            $ref: '#/definitions/models.deleteCourseResponse'
+      summary: Delete course
       tags:
       - Courses
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get details for a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get course details (Not Implemented)
+            $ref: '#/definitions/models.getCourseResponse'
+      summary: Get course details
       tags:
       - Courses
     put:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Update a course's information
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.updateCourseRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Update course (Not Implemented)
+            $ref: '#/definitions/models.updateCourseResponse'
+      summary: Update course
       tags:
       - Courses
   /api/courses/{courseId}/staff:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get all staff members for a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get course staff (Not Implemented)
+            $ref: '#/definitions/models.getCourseStaffResponse'
+      summary: Get course staff
       tags:
       - Courses
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Add a staff member to a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.addStaffToCourseRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Add staff to course (Not Implemented)
+            $ref: '#/definitions/models.addStaffToCourseResponse'
+      summary: Add staff to course
       tags:
       - Courses
   /api/courses/{courseId}/staff/{staffId}:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Remove a staff member from a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: Staff ID
+        in: path
+        name: staffId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Remove staff from course (Not Implemented)
+            $ref: '#/definitions/models.removeStaffFromCourseResponse'
+      summary: Remove staff from course
       tags:
       - Courses
   /api/courses/{courseId}/students:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get all students for a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get course students (Not Implemented)
+            $ref: '#/definitions/models.getCourseStudentsResponse'
+      summary: Get course students
       tags:
       - Courses
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Add a student to a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.addStudentToCourseRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Add student to course (Not Implemented)
+            $ref: '#/definitions/models.addStudentToCourseResponse'
+      summary: Add student to course
       tags:
       - Courses
   /api/courses/{courseId}/students/{studentId}:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Remove a student from a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Remove student from course (Not Implemented)
+            $ref: '#/definitions/models.removeStudentFromCourseResponse'
+      summary: Remove student from course
       tags:
       - Courses
   /api/grades/{student_id}:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get all grades for a student
+      parameters:
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -206,138 +744,267 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get all student grades (Not Implemented)
+      summary: Get all student grades
       tags:
       - Grades
   /api/grades/{student_id}/{courseId}:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get grades for a student's course
+      parameters:
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get student's course grades (Not Implemented)
+            $ref: '#/definitions/models.getStudentCourseGradesResponse'
+      summary: Get student's course grades
+      tags:
+      - Grades
+  /api/grades/course/{courseId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific course grade for a student
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.getStudentCourseGradeResponse'
+      summary: Get course grade for a student
       tags:
       - Grades
   /api/grades/exam:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Delete an exam grade
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.deleteExamGradeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Delete exam grade (Not Implemented)
+            $ref: '#/definitions/models.deleteExamGradeResponse'
+      summary: Delete exam grade
       tags:
       - Grades
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Add an exam grade
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.addExamGradeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Add exam grade (Not Implemented)
+            $ref: '#/definitions/models.addExamGradeResponse'
+      summary: Add exam grade
       tags:
       - Grades
     put:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Update an exam grade
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.updateExamGradeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Update exam grade (Not Implemented)
+            $ref: '#/definitions/models.updateExamGradeResponse'
+      summary: Update exam grade
+      tags:
+      - Grades
+  /api/grades/exam/{examId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific exam grade for a student
+      parameters:
+      - description: Exam ID
+        in: path
+        name: examId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.getExamGradeResponse'
+      summary: Get exam grade
       tags:
       - Grades
   /api/grades/homework:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Delete a homework grade
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.deleteHomeworkGradeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Delete homework grade (Not Implemented)
+            $ref: '#/definitions/models.deleteHomeworkGradeResponse'
+      summary: Delete homework grade
       tags:
       - Grades
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Add a homework grade
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.addHomeworkGradeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Add homework grade (Not Implemented)
+            $ref: '#/definitions/models.addHomeworkGradeResponse'
+      summary: Add homework grade
       tags:
       - Grades
     put:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Update a homework grade
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.updateHomeworkGradeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Update homework grade (Not Implemented)
+            $ref: '#/definitions/models.updateHomeworkGradeResponse'
+      summary: Update homework grade
+      tags:
+      - Grades
+  /api/grades/homework/{homeworkId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a specific homework grade for a student
+      parameters:
+      - description: Homework ID
+        in: path
+        name: homeworkId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.getHomeworkGradeResponse'
+      summary: Get homework grade
       tags:
       - Grades
   /api/homework:
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Create a new homework
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.createHomeworkRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Create homework (Not Implemented)
+            $ref: '#/definitions/models.createHomeworkResponse'
+      summary: Create homework
       tags:
       - Homework
   /api/homework/{courseId}:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get homework for a course
+      parameters:
+      - description: Course ID
+        in: path
+        name: courseId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get homework (Not Implemented)
+            $ref: '#/definitions/models.getHomeworkResponse'
+      summary: Get homework
       tags:
       - Homework
   /api/login:
@@ -378,148 +1045,224 @@ paths:
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Create a new staff member
+      parameters:
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.createStaffMemberRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Create staff member (Not Implemented)
+            $ref: '#/definitions/models.createStaffMemberResponse'
+      summary: Create staff member
       tags:
       - Staff
   /api/staff/{staffId}:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Delete a staff member
+      parameters:
+      - description: Staff ID
+        in: path
+        name: staffId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Delete staff member (Not Implemented)
+            $ref: '#/definitions/models.deleteStaffMemberResponse'
+      summary: Delete staff member
       tags:
       - Staff
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get details for a staff member
+      parameters:
+      - description: Staff ID
+        in: path
+        name: staffId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get staff member (Not Implemented)
+            $ref: '#/definitions/models.getStaffMemberResponse'
+      summary: Get staff member
       tags:
       - Staff
     put:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Update a staff member's information
+      parameters:
+      - description: Staff ID
+        in: path
+        name: staffId
+        required: true
+        type: string
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.updateStaffMemberRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Update staff member (Not Implemented)
+            $ref: '#/definitions/models.updateStaffMemberResponse'
+      summary: Update staff member
       tags:
       - Staff
   /api/staff/{staffId}/courses:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get all courses for a staff member
+      parameters:
+      - description: Staff ID
+        in: path
+        name: staffId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get staff courses (Not Implemented)
+            $ref: '#/definitions/models.getStaffCoursesResponse'
+      summary: Get staff courses
       tags:
       - Staff
   /api/students:
     post:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Create a new student
+      parameters:
+      - description: Student data
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.createStudentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Create new student (Not Implemented)
+            $ref: '#/definitions/models.createStudentResponse'
+      summary: Create new student
       tags:
       - Students
   /api/students/{studentId}:
     delete:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Delete a student
+      parameters:
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Delete student (Not Implemented)
+            $ref: '#/definitions/models.deleteStudentResponse'
+      summary: Delete student
       tags:
       - Students
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get details for a student
+      parameters:
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get student details (Not Implemented)
+            $ref: '#/definitions/models.getStudentResponse'
+      summary: Get student details
       tags:
       - Students
     put:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Update a student's information
+      parameters:
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
+      - description: Student ID
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.updateStudentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Update student (Not Implemented)
+            $ref: '#/definitions/models.updateStudentResponse'
+      summary: Update student
       tags:
       - Students
   /api/students/{studentId}/courses:
     get:
       consumes:
       - application/json
-      description: Not implemented yet
+      description: Get all courses for a student
+      parameters:
+      - description: Student ID
+        in: path
+        name: studentId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.NotImplementedYet'
-      summary: Get student courses (Not Implemented)
+            $ref: '#/definitions/models.getStudentCoursesResponse'
+      summary: Get student courses
       tags:
       - Students
+schemes:
+- http
 securityDefinitions:
   Bearer:
     in: header

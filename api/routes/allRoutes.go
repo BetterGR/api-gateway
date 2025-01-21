@@ -31,17 +31,6 @@ func login(c *gin.Context) {
 	controllers.HandleCallback(c)
 }
 
-// @Summary Get dashboard data
-// @Description Get user dashboard data
-// @Tags Dashboard
-// @Accept json
-// @Produce json
-// @Success 200 {object} models.NotImplementedYet
-// @Router /api/dashboard [get]
-func getDashboardData(c *gin.Context) {
-	controllers.GetDashboardData(c)
-}
-
 // The following endpoints are not implemented yet:
 
 // @Summary Get student courses
@@ -49,7 +38,8 @@ func getDashboardData(c *gin.Context) {
 // @Tags Students
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param studentId path string true "Student ID"
+// @Success 200 {object} models.getStudentCoursesResponse
 // @Router /api/students/{studentId}/courses [get]
 func getStudentCourses(c *gin.Context) {}
 
@@ -58,7 +48,9 @@ func getStudentCourses(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param studentId path string true "Student ID"
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.getStudentCourseGradesResponse
 // @Router /api/grades/{student_id}/{courseId} [get]
 func getStudentCourseGrades(c *gin.Context) {}
 
@@ -67,6 +59,7 @@ func getStudentCourseGrades(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
+// @Param studentId path string true "Student ID"
 // @Success 200 {object} models.NotImplementedYet
 // @Router /api/grades/{student_id} [get]
 func getAllStudentGrades(c *gin.Context) {}
@@ -76,7 +69,8 @@ func getAllStudentGrades(c *gin.Context) {}
 // @Tags Students
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.createStudentRequest true "Student data"
+// @Success 200 {object} models.createStudentResponse
 // @Router /api/students [post]
 func createStudent(c *gin.Context) {}
 
@@ -85,7 +79,8 @@ func createStudent(c *gin.Context) {}
 // @Tags Students
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param studentId path string true "Student ID"
+// @Success 200 {object} models.getStudentResponse
 // @Router /api/students/{studentId} [get]
 func getStudent(c *gin.Context) {}
 
@@ -94,7 +89,9 @@ func getStudent(c *gin.Context) {}
 // @Tags Students
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param studentId path string true "Student ID"
+// @Param credentials body models.updateStudentRequest true "Student ID"
+// @Success 200 {object} models.updateStudentResponse
 // @Router /api/students/{studentId} [put]
 func updateStudent(c *gin.Context) {}
 
@@ -103,7 +100,8 @@ func updateStudent(c *gin.Context) {}
 // @Tags Students
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param studentId path string true "Student ID"
+// @Success 200 {object} models.deleteStudentResponse
 // @Router /api/students/{studentId} [delete]
 func deleteStudent(c *gin.Context) {}
 
@@ -112,7 +110,8 @@ func deleteStudent(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.getCourseResponse
 // @Router /api/courses/{courseId} [get]
 func getCourse(c *gin.Context) {}
 
@@ -121,7 +120,8 @@ func getCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.createCourseRequest true "Student ID"
+// @Success 200 {object} models.createCourseResponse
 // @Router /api/courses [post]
 func createCourse(c *gin.Context) {}
 
@@ -130,7 +130,9 @@ func createCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Param credentials body models.updateCourseRequest true "Student ID"
+// @Success 200 {object} models.updateCourseResponse
 // @Router /api/courses/{courseId} [put]
 func updateCourse(c *gin.Context) {}
 
@@ -139,7 +141,9 @@ func updateCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Param credentials body models.addStudentToCourseRequest true "Student ID"
+// @Success 200 {object} models.addStudentToCourseResponse
 // @Router /api/courses/{courseId}/students [post]
 func addStudentToCourse(c *gin.Context) {}
 
@@ -148,7 +152,9 @@ func addStudentToCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Param studentId path string true "Student ID"
+// @Success 200 {object} models.removeStudentFromCourseResponse
 // @Router /api/courses/{courseId}/students/{studentId} [delete]
 func removeStudentFromCourse(c *gin.Context) {}
 
@@ -157,7 +163,9 @@ func removeStudentFromCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Param credentials body models.addStaffToCourseRequest true "Student ID"
+// @Success 200 {object} models.addStaffToCourseResponse
 // @Router /api/courses/{courseId}/staff [post]
 func addStaffToCourse(c *gin.Context) {}
 
@@ -166,7 +174,9 @@ func addStaffToCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Param staffId path string true "Staff ID"
+// @Success 200 {object} models.removeStaffFromCourseResponse
 // @Router /api/courses/{courseId}/staff/{staffId} [delete]
 func removeStaffFromCourse(c *gin.Context) {}
 
@@ -175,7 +185,8 @@ func removeStaffFromCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.deleteCourseResponse
 // @Router /api/courses/{courseId} [delete]
 func deleteCourse(c *gin.Context) {}
 
@@ -184,7 +195,8 @@ func deleteCourse(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.getCourseStudentsResponse
 // @Router /api/courses/{courseId}/students [get]
 func getCourseStudents(c *gin.Context) {}
 
@@ -193,7 +205,8 @@ func getCourseStudents(c *gin.Context) {}
 // @Tags Courses
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.getCourseStaffResponse
 // @Router /api/courses/{courseId}/staff [get]
 func getCourseStaff(c *gin.Context) {}
 
@@ -202,7 +215,8 @@ func getCourseStaff(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.addHomeworkGradeRequest true "Student ID"
+// @Success 200 {object} models.addHomeworkGradeResponse
 // @Router /api/grades/homework [post]
 func addHomeworkGrade(c *gin.Context) {}
 
@@ -211,7 +225,8 @@ func addHomeworkGrade(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.addExamGradeRequest true "Student ID"
+// @Success 200 {object} models.addExamGradeResponse
 // @Router /api/grades/exam [post]
 func addExamGrade(c *gin.Context) {}
 
@@ -220,7 +235,8 @@ func addExamGrade(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.updateHomeworkGradeRequest true "Student ID"
+// @Success 200 {object} models.updateHomeworkGradeResponse
 // @Router /api/grades/homework [put]
 func updateHomeworkGrade(c *gin.Context) {}
 
@@ -229,7 +245,8 @@ func updateHomeworkGrade(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.updateExamGradeRequest true "Student ID"
+// @Success 200 {object} models.updateExamGradeResponse
 // @Router /api/grades/exam [put]
 func updateExamGrade(c *gin.Context) {}
 
@@ -238,7 +255,8 @@ func updateExamGrade(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.deleteHomeworkGradeRequest true "Student ID"
+// @Success 200 {object} models.deleteHomeworkGradeResponse
 // @Router /api/grades/homework [delete]
 func deleteHomeworkGrade(c *gin.Context) {}
 
@@ -247,16 +265,48 @@ func deleteHomeworkGrade(c *gin.Context) {}
 // @Tags Grades
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.deleteExamGradeRequest true "Student ID"
+// @Success 200 {object} models.deleteExamGradeResponse
 // @Router /api/grades/exam [delete]
 func deleteExamGrade(c *gin.Context) {}
+
+// @Summary Get homework grade
+// @Description Get a specific homework grade for a student
+// @Tags Grades
+// @Accept json
+// @Produce json
+// @Param homeworkId path string true "Homework ID"
+// @Success 200 {object} models.getHomeworkGradeResponse
+// @Router /api/grades/homework/{homeworkId} [get]
+func getHomeworkGrade(c *gin.Context) {}
+
+// @Summary Get exam grade
+// @Description Get a specific exam grade for a student
+// @Tags Grades
+// @Accept json
+// @Produce json
+// @Param examId path string true "Exam ID"
+// @Success 200 {object} models.getExamGradeResponse
+// @Router /api/grades/exam/{examId} [get]
+func getExamGrade(c *gin.Context) {}
+
+// @Summary Get course grade for a student
+// @Description Get a specific course grade for a student
+// @Tags Grades
+// @Accept json
+// @Produce json
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.getStudentCourseGradeResponse
+// @Router /api/grades/course/{courseId} [get]
+func getStudentCourseGrade(c *gin.Context) {}
 
 // @Summary Get homework
 // @Description Get homework for a course
 // @Tags Homework
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} models.getHomeworkResponse
 // @Router /api/homework/{courseId} [get]
 func getHomework(c *gin.Context) {}
 
@@ -265,7 +315,8 @@ func getHomework(c *gin.Context) {}
 // @Tags Homework
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.createHomeworkRequest true "Student ID"
+// @Success 200 {object} models.createHomeworkResponse
 // @Router /api/homework [post]
 func createHomework(c *gin.Context) {}
 
@@ -274,7 +325,8 @@ func createHomework(c *gin.Context) {}
 // @Tags Staff
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param staffId path string true "Staff ID"
+// @Success 200 {object} models.getStaffMemberResponse
 // @Router /api/staff/{staffId} [get]
 func getStaffMember(c *gin.Context) {}
 
@@ -283,7 +335,8 @@ func getStaffMember(c *gin.Context) {}
 // @Tags Staff
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param staffId path string true "Staff ID"
+// @Success 200 {object} models.getStaffCoursesResponse
 // @Router /api/staff/{staffId}/courses [get]
 func getStaffCourses(c *gin.Context) {}
 
@@ -292,7 +345,8 @@ func getStaffCourses(c *gin.Context) {}
 // @Tags Staff
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param credentials body models.createStaffMemberRequest true "Student ID"
+// @Success 200 {object} models.createStaffMemberResponse
 // @Router /api/staff [post]
 func createStaffMember(c *gin.Context) {}
 
@@ -301,7 +355,9 @@ func createStaffMember(c *gin.Context) {}
 // @Tags Staff
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param staffId path string true "Staff ID"
+// @Param credentials body models.updateStaffMemberRequest true "Student ID"
+// @Success 200 {object} models.updateStaffMemberResponse
 // @Router /api/staff/{staffId} [put]
 func updateStaffMember(c *gin.Context) {}
 
@@ -310,6 +366,7 @@ func updateStaffMember(c *gin.Context) {}
 // @Tags Staff
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.NotImplementedYet
+// @Param staffId path string true "Staff ID"
+// @Success 200 {object} models.deleteStaffMemberResponse
 // @Router /api/staff/{staffId} [delete]
 func deleteStaffMember(c *gin.Context) {}

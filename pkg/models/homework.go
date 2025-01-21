@@ -21,16 +21,24 @@ type HomeworkSubmission struct {
 	SubmittedAt time.Time `json:"submitted_at"`
 }
 
-// Note: Unimplemented features
-
-type HomeworkAttachment struct {
-	NotImplementedYet
+type getHomeworkRequest struct {
+	CourseID string `uri:"courseId" binding:"required"`
 }
 
-type HomeworkFeedback struct {
-	NotImplementedYet
+type createHomeworkRequest struct {
+	CourseID    string    `json:"course_id" binding:"required"`
+	HomeworkID  string    `json:"homework_id" binding:"required"`
+	Title       string    `json:"title" binding:"required"`
+	Description string    `json:"description"`
+	DueDate     time.Time `json:"due_date" binding:"required"`
 }
 
-type HomeworkBulkGrade struct {
-	NotImplementedYet
+type getHomeworkResponse struct {
+	Homework Homework `json:"homework"`
 }
+
+type createHomeworkResponse struct {
+	Homework Homework `json:"homework"`
+}
+
+
