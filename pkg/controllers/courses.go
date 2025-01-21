@@ -20,6 +20,29 @@ func InitCoursesGRPCClient(address string) (courseProtos.CourseServiceClient, er
 	return courseProtos.NewCourseServiceClient(conn), nil
 }
 
+// GetAnnouncementHandler handles fetching an announcement for a course.
+func GetAnnouncementHandler(c *gin.Context, client courseProtos.CourseServiceClient) {
+	courseID := c.Param("courseId")
+
+	klog.Infof("Fetching announcement for course: %s", courseID)
+
+	req := &courseProtos.GetAnnouncementRequest{
+		CourseId: courseID,
+	}
+
+	resp, err := client.GetAnnouncement(context.Background(), req)
+	if err != nil {
+		klog.Errorf("Failed to get announcement: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch announcement"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"course_id":    resp.CourseId,
+		"announcement": resp.Announcement,
+	})
+}
+
 func GetCourseHandler(c *gin.Context, grpcClient courseProtos.CourseServiceClient) {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Implemented"})
 }
