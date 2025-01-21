@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	gradesProtos "github.com/BetterGR/grades-microservice/protos"
@@ -25,10 +26,18 @@ func InitGradesGRPCClient(address string) (gradesProtos.GradesServiceClient, err
 
 // GetStudentCourseGradesHandler handles REST requests and calls the gRPC Grades Microservice.
 func GetStudentCourseGradesHandler(c *gin.Context, grpcClient gradesProtos.GradesServiceClient) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization token provided"})
+		return
+	}
+
+	token := strings.TrimPrefix(authHeader, "Bearer ")
 	studentId := c.Param("studentId")
 	courseId := c.Param("courseId")
 	// Build gRPC request.
 	request := &gradesProtos.GetStudentCourseGradesRequest{
+		Token:     token,
 		StudentId: studentId,
 		CourseId:  courseId,
 	}
@@ -52,6 +61,13 @@ func GetStudentCourseGradesHandler(c *gin.Context, grpcClient gradesProtos.Grade
 // GetStudentGradesHandler handles REST requests and calls the gRPC Grades Microservice to return
 // all the student grades
 func GetStudentGradesHandler(c *gin.Context, grpcClient gradesProtos.GradesServiceClient) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization token provided"})
+		return
+	}
+
+	token := strings.TrimPrefix(authHeader, "Bearer ")
 	// Log all parameters for debugging
 	klog.Infof("All params: %v", c.Params)
 
@@ -59,7 +75,7 @@ func GetStudentGradesHandler(c *gin.Context, grpcClient gradesProtos.GradesServi
 	klog.Infof("Student ID from param: '%s'", studentId)
 
 	// Build gRPC request.
-	request := &gradesProtos.StudentId{StudentId: studentId}
+	request := &gradesProtos.StudentId{Token: token, StudentId: studentId}
 	klog.Infof("Request built with student ID: '%s'", request.StudentId)
 
 	// Call the gRPC server.
