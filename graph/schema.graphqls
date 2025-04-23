@@ -1,0 +1,214 @@
+# =========================
+# TYPES
+# =========================
+
+type Student {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Staff {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+  title: String
+  office: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Course {
+  id: ID!
+  name: String!
+  semester: String!
+  description: String
+  createdAt: String!
+  updatedAt: String!
+  staff: [Staff!]!
+  students: [Student!]!
+  announcements: [Announcement!]!
+  homework: [Homework!]!
+}
+
+type Announcement {
+  id: ID!
+  courseId: ID!
+  title: String
+  content: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Homework {
+  id: ID!
+  courseId: ID!
+  title: String!
+  description: String!
+  workflow: String!
+  dueDate: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Submission {
+  id: ID!
+  homeworkId: ID!
+  studentId: ID!
+  submittedAt: String!
+  updatedAt: String!
+}
+
+type Grade {
+  id: ID!
+  studentId: ID!
+  courseId: ID!
+  semester: String!
+  gradeType: String!
+  itemId: String!
+  gradeValue: String!
+  gradedBy: ID
+  comments: String
+  gradedAt: String!
+  updatedAt: String!
+}
+
+# =========================
+# QUERIES
+# =========================
+
+type Query {
+  student(id: ID!): Student
+  students: [Student!]!
+
+  staff(id: ID!): Staff
+  staffMembers: [Staff!]!
+
+  course(id: ID!): Course
+  courses: [Course!]!
+
+  grade(id: ID!): Grade
+  grades(studentId: ID, courseId: ID): [Grade!]!
+
+  homework(id: ID!): Homework
+  homeworkByCourse(courseId: ID!): [Homework!]!
+
+  submission(id: ID!): Submission
+  submissionsByStudent(studentId: ID!): [Submission!]!
+
+  announcement(courseId: ID!): [Announcement!]!
+}
+
+# =========================
+# MUTATIONS
+# =========================
+
+type Mutation {
+  createStudent(input: NewStudent!): Student!
+  updateStudent(id: ID!, input: UpdateStudent!): Student!
+  deleteStudent(id: ID!): Boolean!
+
+  createStaff(input: NewStaff!): Staff!
+  updateStaff(id: ID!, input: UpdateStaff!): Staff!
+  deleteStaff(id: ID!): Boolean!
+
+  createCourse(input: NewCourse!): Course!
+  updateCourse(id: ID!, input: UpdateCourse!): Course!
+  deleteCourse(id: ID!): Boolean!
+
+  assignStudentToCourse(courseId: ID!, studentId: ID!): Boolean!
+  assignStaffToCourse(courseId: ID!, staffId: ID!): Boolean!
+
+  createGrade(input: NewGrade!): Grade!
+  updateGrade(id: ID!, input: UpdateGrade!): Grade!
+  deleteGrade(id: ID!): Boolean!
+
+  createHomework(input: NewHomework!): Homework!
+  submitHomework(homeworkId: ID!, studentId: ID!): Submission!
+
+  createAnnouncement(input: NewAnnouncement!): Announcement!
+}
+
+# =========================
+# INPUTS
+# =========================
+
+input NewStudent {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+}
+
+input UpdateStudent {
+  firstName: String
+  lastName: String
+  email: String
+  phoneNumber: String
+}
+
+input NewStaff {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+  title: String
+  office: String
+}
+
+input UpdateStaff {
+  firstName: String
+  lastName: String
+  email: String
+  phoneNumber: String
+  title: String
+  office: String
+}
+
+input NewCourse {
+  name: String!
+  semester: String!
+  description: String
+}
+
+input UpdateCourse {
+  name: String
+  semester: String
+  description: String
+}
+
+input NewGrade {
+  studentId: ID!
+  courseId: ID!
+  semester: String!
+  gradeType: String!
+  itemId: String!
+  gradeValue: String!
+  gradedBy: ID
+  comments: String
+}
+
+input UpdateGrade {
+  gradeValue: String
+  comments: String
+}
+
+input NewHomework {
+  courseId: ID!
+  title: String!
+  description: String!
+  workflow: String!
+  dueDate: String!
+}
+
+input NewAnnouncement {
+  courseId: ID!
+  title: String
+  content: String!
+}
