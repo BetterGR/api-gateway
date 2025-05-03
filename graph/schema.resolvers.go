@@ -7,78 +7,516 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/BetterGR/api-gateway/graph/model"
+	coursespb "github.com/BetterGR/courses-microservice/protos"
+	gradespb "github.com/BetterGR/grades-microservice/protos"
+	staffpb "github.com/BetterGR/staff-microservice/protos"
+	studentspb "github.com/BetterGR/students-microservice/protos"
 )
 
 // CreateStudent is the resolver for the createStudent field.
 func (r *mutationResolver) CreateStudent(ctx context.Context, input model.NewStudent) (*model.Student, error) {
-	panic(fmt.Errorf("not implemented: CreateStudent - createStudent"))
+	// Create a gRPC request to the students microservice
+	req := &studentspb.CreateStudentRequest{
+		Student: &studentspb.Student{
+			FirstName:   input.FirstName,
+			LastName:    input.LastName,
+			Email:       input.Email,
+			PhoneNumber: input.PhoneNumber,
+		},
+		Token: "token", // Assume this function extracts the auth token from context
+	}
+
+	// Call the students microservice
+	res, err := r.StudentsClient.CreateStudent(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	now := time.Now().Format(time.RFC3339)
+	student := &model.Student{
+		ID:          res.Student.StudentID,
+		FirstName:   res.Student.FirstName,
+		LastName:    res.Student.LastName,
+		Email:       res.Student.Email,
+		PhoneNumber: res.Student.PhoneNumber,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		Courses:     []*model.Course{}, // Initialize with empty courses
+	}
+
+	return student, nil
 }
 
 // UpdateStudent is the resolver for the updateStudent field.
 func (r *mutationResolver) UpdateStudent(ctx context.Context, id string, input model.UpdateStudent) (*model.Student, error) {
-	panic(fmt.Errorf("not implemented: UpdateStudent - updateStudent"))
+	// First get the current student data
+	getReq := &studentspb.GetStudentRequest{
+		StudentID: id,
+		Token:     "token",
+	}
+
+	currentStudent, err := r.StudentsClient.GetStudent(ctx, getReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update only the fields that were provided
+	student := currentStudent.Student
+	if input.FirstName != nil {
+		student.FirstName = *input.FirstName
+	}
+	if input.LastName != nil {
+		student.LastName = *input.LastName
+	}
+	if input.Email != nil {
+		student.Email = *input.Email
+	}
+	if input.PhoneNumber != nil {
+		student.PhoneNumber = *input.PhoneNumber
+	}
+
+	// Create the update request
+	updateReq := &studentspb.UpdateStudentRequest{
+		Student: student,
+		Token:   "token",
+	}
+
+	// Call the students microservice
+	res, err := r.StudentsClient.UpdateStudent(ctx, updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	updatedStudent := &model.Student{
+		ID:          res.Student.StudentID,
+		FirstName:   res.Student.FirstName,
+		LastName:    res.Student.LastName,
+		Email:       res.Student.Email,
+		PhoneNumber: res.Student.PhoneNumber,
+		UpdatedAt:   time.Now().Format(time.RFC3339),
+		Courses:     []*model.Course{}, // We'll need to fetch courses separately
+	}
+
+	return updatedStudent, nil
 }
 
 // DeleteStudent is the resolver for the deleteStudent field.
 func (r *mutationResolver) DeleteStudent(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteStudent - deleteStudent"))
+	// Create the delete request
+	req := &studentspb.DeleteStudentRequest{
+		StudentID: id,
+		Token:     "token",
+	}
+
+	// Call the students microservice
+	_, err := r.StudentsClient.DeleteStudent(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // CreateStaff is the resolver for the createStaff field.
 func (r *mutationResolver) CreateStaff(ctx context.Context, input model.NewStaff) (*model.Staff, error) {
-	panic(fmt.Errorf("not implemented: CreateStaff - createStaff"))
+	// Create a gRPC request to the staff microservice
+	req := &staffpb.CreateStaffMemberRequest{
+		StaffMember: &staffpb.StaffMember{
+			FirstName:   input.FirstName,
+			LastName:    input.LastName,
+			Email:       input.Email,
+			PhoneNumber: input.PhoneNumber,
+			Title:       *input.Title,
+			Office:      *input.Office,
+		},
+		Token: "token",
+	}
+
+	// Call the staff microservice
+	res, err := r.StaffClient.CreateStaffMember(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	now := time.Now().Format(time.RFC3339)
+	staff := &model.Staff{
+		ID:          res.StaffMember.StaffID,
+		FirstName:   res.StaffMember.FirstName,
+		LastName:    res.StaffMember.LastName,
+		Email:       res.StaffMember.Email,
+		PhoneNumber: res.StaffMember.PhoneNumber,
+		Title:       &res.StaffMember.Title,
+		Office:      &res.StaffMember.Office,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		Courses:     []*model.Course{}, // Initialize with empty courses
+	}
+
+	return staff, nil
 }
 
 // UpdateStaff is the resolver for the updateStaff field.
 func (r *mutationResolver) UpdateStaff(ctx context.Context, id string, input model.UpdateStaff) (*model.Staff, error) {
-	panic(fmt.Errorf("not implemented: UpdateStaff - updateStaff"))
+	// First get the current staff data
+	getReq := &staffpb.GetStaffMemberRequest{
+		StaffID: id,
+		Token:   "token",
+	}
+
+	currentStaff, err := r.StaffClient.GetStaffMember(ctx, getReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update only the fields that were provided
+	staffMember := currentStaff.StaffMember
+	if input.FirstName != nil {
+		staffMember.FirstName = *input.FirstName
+	}
+	if input.LastName != nil {
+		staffMember.LastName = *input.LastName
+	}
+	if input.Email != nil {
+		staffMember.Email = *input.Email
+	}
+	if input.PhoneNumber != nil {
+		staffMember.PhoneNumber = *input.PhoneNumber
+	}
+	if input.Title != nil {
+		staffMember.Title = *input.Title
+	}
+	if input.Office != nil {
+		staffMember.Office = *input.Office
+	}
+
+	// Create the update request
+	updateReq := &staffpb.UpdateStaffMemberRequest{
+		StaffMember: staffMember,
+		Token:       "token",
+	}
+
+	// Call the staff microservice
+	res, err := r.StaffClient.UpdateStaffMember(ctx, updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	updatedStaff := &model.Staff{
+		ID:          res.StaffMember.StaffID,
+		FirstName:   res.StaffMember.FirstName,
+		LastName:    res.StaffMember.LastName,
+		Email:       res.StaffMember.Email,
+		PhoneNumber: res.StaffMember.PhoneNumber,
+		Title:       &res.StaffMember.Title,
+		Office:      &res.StaffMember.Office,
+		UpdatedAt:   time.Now().Format(time.RFC3339),
+		Courses:     []*model.Course{}, // We'll need to fetch courses separately
+	}
+
+	return updatedStaff, nil
 }
 
 // DeleteStaff is the resolver for the deleteStaff field.
 func (r *mutationResolver) DeleteStaff(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteStaff - deleteStaff"))
+	// Create the delete request
+	req := &staffpb.DeleteStaffMemberRequest{
+		StaffID: id,
+		Token:   "token",
+	}
+
+	// Call the staff microservice
+	_, err := r.StaffClient.DeleteStaffMember(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // CreateCourse is the resolver for the createCourse field.
 func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCourse) (*model.Course, error) {
-	panic(fmt.Errorf("not implemented: CreateCourse - createCourse"))
+	// Create a gRPC request to the courses microservice
+	req := &coursespb.CreateCourseRequest{
+		Course: &coursespb.Course{
+			CourseName:  input.Name,
+			Semester:    input.Semester,
+			Description: *input.Description,
+		},
+		Token: "token",
+	}
+
+	// Call the courses microservice
+	res, err := r.CoursesClient.CreateCourse(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	now := time.Now().Format(time.RFC3339)
+	course := &model.Course{
+		ID:            res.Course.CourseID,
+		Name:          res.Course.CourseName,
+		Semester:      res.Course.Semester,
+		Description:   &res.Course.Description,
+		CreatedAt:     now,
+		UpdatedAt:     now,
+		Staff:         []*model.Staff{},
+		Students:      []*model.Student{},
+		Announcements: []*model.Announcement{},
+		Homework:      []*model.Homework{},
+		Grades:        []*model.Grade{},
+	}
+
+	return course, nil
 }
 
 // UpdateCourse is the resolver for the updateCourse field.
 func (r *mutationResolver) UpdateCourse(ctx context.Context, id string, input model.UpdateCourse) (*model.Course, error) {
-	panic(fmt.Errorf("not implemented: UpdateCourse - updateCourse"))
+	// First get the current course data
+	getReq := &coursespb.GetCourseRequest{
+		CourseID: id,
+		Token:    "token",
+	}
+
+	currentCourse, err := r.CoursesClient.GetCourse(ctx, getReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update only the fields that were provided
+	course := currentCourse.Course
+	if input.Name != nil {
+		course.CourseName = *input.Name
+	}
+	if input.Semester != nil {
+		course.Semester = *input.Semester
+	}
+	if input.Description != nil {
+		course.Description = *input.Description
+	}
+
+	// Create the update request
+	updateReq := &coursespb.UpdateCourseRequest{
+		Course: course,
+		Token:  "token",
+	}
+
+	// Call the courses microservice
+	res, err := r.CoursesClient.UpdateCourse(ctx, updateReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	updatedCourse := &model.Course{
+		ID:            res.Course.CourseID,
+		Name:          res.Course.CourseName,
+		Semester:      res.Course.Semester,
+		Description:   &res.Course.Description,
+		UpdatedAt:     time.Now().Format(time.RFC3339),
+		Staff:         []*model.Staff{},
+		Students:      []*model.Student{},
+		Announcements: []*model.Announcement{},
+		Homework:      []*model.Homework{},
+		Grades:        []*model.Grade{},
+	}
+
+	return updatedCourse, nil
 }
 
 // DeleteCourse is the resolver for the deleteCourse field.
 func (r *mutationResolver) DeleteCourse(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteCourse - deleteCourse"))
+	// Create the delete request
+	req := &coursespb.DeleteCourseRequest{
+		CourseID: id,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	_, err := r.CoursesClient.DeleteCourse(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
-// AssignStudentToCourse is the resolver for the assignStudentToCourse field.
-func (r *mutationResolver) AssignStudentToCourse(ctx context.Context, courseID string, studentID string) (bool, error) {
-	panic(fmt.Errorf("not implemented: AssignStudentToCourse - assignStudentToCourse"))
+// AddStudentToCourse is the resolver for the addStudentToCourse field.
+func (r *mutationResolver) AddStudentToCourse(ctx context.Context, courseID string, studentID string) (bool, error) {
+	// Create the add student to course request
+	req := &coursespb.AddStudentRequest{
+		CourseID:  courseID,
+		StudentID: studentID,
+		Token:     "token",
+	}
+
+	// Call the courses microservice
+	_, err := r.CoursesClient.AddStudentToCourse(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
-// AssignStaffToCourse is the resolver for the assignStaffToCourse field.
-func (r *mutationResolver) AssignStaffToCourse(ctx context.Context, courseID string, staffID string) (bool, error) {
-	panic(fmt.Errorf("not implemented: AssignStaffToCourse - assignStaffToCourse"))
+// RemoveStudentFromCourse is the resolver for the removeStudentFromCourse field.
+func (r *mutationResolver) RemoveStudentFromCourse(ctx context.Context, courseID string, studentID string) (bool, error) {
+	// Create the remove student from course request
+	req := &coursespb.RemoveStudentRequest{
+		CourseID:  courseID,
+		StudentID: studentID,
+		Token:     "token",
+	}
+
+	// Call the courses microservice
+	_, err := r.CoursesClient.RemoveStudentFromCourse(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// AddStaffToCourse is the resolver for the addStaffToCourse field.
+func (r *mutationResolver) AddStaffToCourse(ctx context.Context, courseID string, staffID string) (bool, error) {
+	// Create the add staff to course request
+	req := &coursespb.AddStaffRequest{
+		CourseID: courseID,
+		StaffID:  staffID,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	_, err := r.CoursesClient.AddStaffToCourse(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// RemoveStaffFromCourse is the resolver for the removeStaffFromCourse field.
+func (r *mutationResolver) RemoveStaffFromCourse(ctx context.Context, courseID string, staffID string) (bool, error) {
+	// Create the remove staff from course request
+	req := &coursespb.RemoveStaffRequest{
+		CourseID: courseID,
+		StaffID:  staffID,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	_, err := r.CoursesClient.RemoveStaffFromCourse(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // CreateGrade is the resolver for the createGrade field.
 func (r *mutationResolver) CreateGrade(ctx context.Context, input model.NewGrade) (*model.Grade, error) {
-	panic(fmt.Errorf("not implemented: CreateGrade - createGrade"))
+	// Create a gRPC request to the grades microservice
+	req := &gradespb.AddSingleGradeRequest{
+		Grade: &gradespb.SingleGrade{
+			StudentID:  input.StudentID,
+			CourseID:   input.CourseID,
+			Semester:   input.Semester,
+			GradeType:  input.GradeType,
+			ItemID:     input.ItemID,
+			GradeValue: input.GradeValue,
+			GradedBy:   *input.GradedBy,
+			Comments:   *input.Comments,
+		},
+		Token: "token",
+	}
+
+	// Call the grades microservice
+	res, err := r.GradesClient.AddSingleGrade(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	now := time.Now().Format(time.RFC3339)
+	grade := &model.Grade{
+		ID:         res.Grade.GradeID,
+		StudentID:  res.Grade.StudentID,
+		CourseID:   res.Grade.CourseID,
+		Semester:   res.Grade.Semester,
+		GradeType:  res.Grade.GradeType,
+		ItemID:     res.Grade.ItemID,
+		GradeValue: res.Grade.GradeValue,
+		GradedBy:   &res.Grade.GradedBy,
+		Comments:   &res.Grade.Comments,
+		GradedAt:   now,
+		UpdatedAt:  now,
+	}
+
+	return grade, nil
 }
 
 // UpdateGrade is the resolver for the updateGrade field.
 func (r *mutationResolver) UpdateGrade(ctx context.Context, id string, input model.UpdateGrade) (*model.Grade, error) {
-	panic(fmt.Errorf("not implemented: UpdateGrade - updateGrade"))
+	// Create the update request with just the fields to update
+	req := &gradespb.UpdateSingleGradeRequest{
+		Grade: &gradespb.SingleGrade{
+			GradeID:    id,
+			GradeValue: *input.GradeValue,
+			Comments:   *input.Comments,
+		},
+		Token: "token",
+	}
+
+	// Call the grades microservice
+	res, err := r.GradesClient.UpdateSingleGrade(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	grade := &model.Grade{
+		ID:         res.Grade.GradeID,
+		StudentID:  res.Grade.StudentID,
+		CourseID:   res.Grade.CourseID,
+		Semester:   res.Grade.Semester,
+		GradeType:  res.Grade.GradeType,
+		ItemID:     res.Grade.ItemID,
+		GradeValue: res.Grade.GradeValue,
+		GradedBy:   &res.Grade.GradedBy,
+		Comments:   &res.Grade.Comments,
+		UpdatedAt:  time.Now().Format(time.RFC3339),
+	}
+
+	return grade, nil
 }
 
 // DeleteGrade is the resolver for the deleteGrade field.
-func (r *mutationResolver) DeleteGrade(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteGrade - deleteGrade"))
+func (r *mutationResolver) DeleteGrade(ctx context.Context, id string, courseID string, semester string, studentID string, gradeType string, itemID string) (bool, error) {
+	// Create the delete request
+	req := &gradespb.RemoveSingleGradeRequest{
+		GradeID:   id,
+		CourseID:  courseID,
+		Semester:  semester,
+		StudentID: studentID,
+		GradeType: gradeType,
+		ItemID:    itemID,
+		Token:     "token",
+	}
+
+	// Call the grades microservice
+	_, err := r.GradesClient.RemoveSingleGrade(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // CreateHomework is the resolver for the createHomework field.
@@ -93,47 +531,428 @@ func (r *mutationResolver) SubmitHomework(ctx context.Context, homeworkID string
 
 // CreateAnnouncement is the resolver for the createAnnouncement field.
 func (r *mutationResolver) CreateAnnouncement(ctx context.Context, input model.NewAnnouncement) (*model.Announcement, error) {
-	panic(fmt.Errorf("not implemented: CreateAnnouncement - createAnnouncement"))
+	// Create a gRPC request to the courses microservice
+	req := &coursespb.AddAnnouncementRequest{
+		CourseID: input.CourseID,
+		Announcement: &coursespb.Announcement{
+			AnnouncementTitle:   input.Title,
+			AnnouncementContent: input.Content,
+		},
+		Token: "token",
+	}
+
+	// Call the courses microservice
+	res, err := r.CoursesClient.AddAnnouncementToCourse(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	now := time.Now().Format(time.RFC3339)
+	announcement := &model.Announcement{
+		ID:        res.Announcement.AnnouncementID,
+		CourseID:  input.CourseID,
+		Title:     res.Announcement.AnnouncementTitle,
+		Content:   res.Announcement.AnnouncementContent,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	return announcement, nil
+}
+
+// DeleteAnnouncement is the resolver for the deleteAnnouncement field.
+func (r *mutationResolver) DeleteAnnouncement(ctx context.Context, courseID string, announcementID string) (bool, error) {
+	// Create a gRPC request to delete an announcement
+	req := &coursespb.RemoveAnnouncementRequest{
+		CourseID:       courseID,
+		AnnouncementID: announcementID,
+		Token:          "token",
+	}
+
+	// Call the courses microservice
+	_, err := r.CoursesClient.RemoveAnnouncementFromCourse(ctx, req)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // Student is the resolver for the student field.
 func (r *queryResolver) Student(ctx context.Context, id string) (*model.Student, error) {
-	panic(fmt.Errorf("not implemented: Student - student"))
-}
+	// Create a gRPC request to the students microservice
+	req := &studentspb.GetStudentRequest{
+		StudentID: id,
+		Token:     "token",
+	}
 
-// Students is the resolver for the students field.
-func (r *queryResolver) Students(ctx context.Context) ([]*model.Student, error) {
-	panic(fmt.Errorf("not implemented: Students - students"))
+	// Call the students microservice
+	res, err := r.StudentsClient.GetStudent(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	student := &model.Student{
+		ID:          res.Student.StudentID,
+		FirstName:   res.Student.FirstName,
+		LastName:    res.Student.LastName,
+		Email:       res.Student.Email,
+		PhoneNumber: res.Student.PhoneNumber,
+		CreatedAt:   time.Now().Format(time.RFC3339), // In reality, these should come from the microservice
+		UpdatedAt:   time.Now().Format(time.RFC3339),
+		Courses:     []*model.Course{}, // We'll need to fetch courses separately
+	}
+
+	return student, nil
 }
 
 // Staff is the resolver for the staff field.
 func (r *queryResolver) Staff(ctx context.Context, id string) (*model.Staff, error) {
-	panic(fmt.Errorf("not implemented: Staff - staff"))
-}
+	// Create a gRPC request to the staff microservice
+	req := &staffpb.GetStaffMemberRequest{
+		StaffID: id,
+		Token:   "token",
+	}
 
-// StaffMembers is the resolver for the staffMembers field.
-func (r *queryResolver) StaffMembers(ctx context.Context) ([]*model.Staff, error) {
-	panic(fmt.Errorf("not implemented: StaffMembers - staffMembers"))
+	// Call the staff microservice
+	res, err := r.StaffClient.GetStaffMember(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	staff := &model.Staff{
+		ID:          res.StaffMember.StaffID,
+		FirstName:   res.StaffMember.FirstName,
+		LastName:    res.StaffMember.LastName,
+		Email:       res.StaffMember.Email,
+		PhoneNumber: res.StaffMember.PhoneNumber,
+		Title:       &res.StaffMember.Title,
+		Office:      &res.StaffMember.Office,
+		CreatedAt:   time.Now().Format(time.RFC3339), // In reality, these should come from the microservice
+		UpdatedAt:   time.Now().Format(time.RFC3339),
+		Courses:     []*model.Course{}, // We'll need to fetch courses separately
+	}
+
+	return staff, nil
 }
 
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
-	panic(fmt.Errorf("not implemented: Course - course"))
+	// Create a gRPC request to the courses microservice
+	req := &coursespb.GetCourseRequest{
+		CourseID: id,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	res, err := r.CoursesClient.GetCourse(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	course := &model.Course{
+		ID:            res.Course.CourseID,
+		Name:          res.Course.CourseName,
+		Semester:      res.Course.Semester,
+		Description:   &res.Course.Description,
+		CreatedAt:     time.Now().Format(time.RFC3339), // In reality, these should come from the microservice
+		UpdatedAt:     time.Now().Format(time.RFC3339),
+		Staff:         []*model.Staff{},
+		Students:      []*model.Student{},
+		Announcements: []*model.Announcement{},
+		Homework:      []*model.Homework{},
+		Grades:        []*model.Grade{},
+	}
+
+	return course, nil
 }
 
-// Courses is the resolver for the courses field.
-func (r *queryResolver) Courses(ctx context.Context) ([]*model.Course, error) {
-	panic(fmt.Errorf("not implemented: Courses - courses"))
+// CourseStudents is the resolver for the courseStudents field.
+func (r *queryResolver) CourseStudents(ctx context.Context, courseID string) ([]*model.Student, error) {
+	// Create a gRPC request to the courses microservice to get student IDs
+	courseStudentsReq := &coursespb.GetCourseStudentsRequest{
+		CourseID: courseID,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	courseStudentsRes, err := r.CoursesClient.GetCourseStudents(ctx, courseStudentsReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the details for each student from the students microservice
+	students := make([]*model.Student, len(courseStudentsRes.StudentsIDs))
+	for i, studentID := range courseStudentsRes.StudentsIDs {
+		// Get student details
+		studentReq := &studentspb.GetStudentRequest{
+			StudentID: studentID,
+			Token:     "token",
+		}
+
+		studentRes, err := r.StudentsClient.GetStudent(ctx, studentReq)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert to GraphQL model
+		students[i] = &model.Student{
+			ID:          studentRes.Student.StudentID,
+			FirstName:   studentRes.Student.FirstName,
+			LastName:    studentRes.Student.LastName,
+			Email:       studentRes.Student.Email,
+			PhoneNumber: studentRes.Student.PhoneNumber,
+			CreatedAt:   time.Now().Format(time.RFC3339),
+			UpdatedAt:   time.Now().Format(time.RFC3339),
+			Courses:     []*model.Course{},
+		}
+	}
+
+	return students, nil
+}
+
+// CourseStaff is the resolver for the courseStaff field.
+func (r *queryResolver) CourseStaff(ctx context.Context, courseID string) ([]*model.Staff, error) {
+	// Create a gRPC request to the courses microservice to get staff IDs
+	courseStaffReq := &coursespb.GetCourseStaffRequest{
+		CourseID: courseID,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	courseStaffRes, err := r.CoursesClient.GetCourseStaff(ctx, courseStaffReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the details for each staff member from the staff microservice
+	staffMembers := make([]*model.Staff, len(courseStaffRes.StaffIDs))
+	for i, staffID := range courseStaffRes.StaffIDs {
+		// Get staff details
+		staffReq := &staffpb.GetStaffMemberRequest{
+			StaffID: staffID,
+			Token:   "token",
+		}
+
+		staffRes, err := r.StaffClient.GetStaffMember(ctx, staffReq)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert to GraphQL model
+		staffMembers[i] = &model.Staff{
+			ID:          staffRes.StaffMember.StaffID,
+			FirstName:   staffRes.StaffMember.FirstName,
+			LastName:    staffRes.StaffMember.LastName,
+			Email:       staffRes.StaffMember.Email,
+			PhoneNumber: staffRes.StaffMember.PhoneNumber,
+			Title:       &staffRes.StaffMember.Title,
+			Office:      &staffRes.StaffMember.Office,
+			CreatedAt:   time.Now().Format(time.RFC3339),
+			UpdatedAt:   time.Now().Format(time.RFC3339),
+			Courses:     []*model.Course{},
+		}
+	}
+
+	return staffMembers, nil
+}
+
+// StudentCourses is the resolver for the studentCourses field.
+func (r *queryResolver) StudentCourses(ctx context.Context, studentID string) ([]*model.Course, error) {
+	// Create a gRPC request to the courses microservice to get course IDs for a student
+	studentCoursesReq := &coursespb.GetStudentCoursesRequest{
+		StudentID: studentID,
+		Token:     "token",
+	}
+
+	// Call the courses microservice
+	studentCoursesRes, err := r.CoursesClient.GetStudentCourses(ctx, studentCoursesReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the details for each course
+	courses := make([]*model.Course, len(studentCoursesRes.CoursesIDs))
+	for i, courseID := range studentCoursesRes.CoursesIDs {
+		// Get course details
+		courseReq := &coursespb.GetCourseRequest{
+			CourseID: courseID,
+			Token:    "token",
+		}
+
+		courseRes, err := r.CoursesClient.GetCourse(ctx, courseReq)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert to GraphQL model
+		courses[i] = &model.Course{
+			ID:            courseRes.Course.CourseID,
+			Name:          courseRes.Course.CourseName,
+			Semester:      courseRes.Course.Semester,
+			Description:   &courseRes.Course.Description,
+			CreatedAt:     time.Now().Format(time.RFC3339),
+			UpdatedAt:     time.Now().Format(time.RFC3339),
+			Staff:         []*model.Staff{},
+			Students:      []*model.Student{},
+			Announcements: []*model.Announcement{},
+			Homework:      []*model.Homework{},
+			Grades:        []*model.Grade{},
+		}
+	}
+
+	return courses, nil
+}
+
+// StaffCourses is the resolver for the staffCourses field.
+func (r *queryResolver) StaffCourses(ctx context.Context, staffID string) ([]*model.Course, error) {
+	// Create a gRPC request to the courses microservice to get course IDs for a staff member
+	staffCoursesReq := &coursespb.GetStaffCoursesRequest{
+		StaffID: staffID,
+		Token:   "token",
+	}
+
+	// Call the courses microservice
+	staffCoursesRes, err := r.CoursesClient.GetStaffCourses(ctx, staffCoursesReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the details for each course
+	courses := make([]*model.Course, len(staffCoursesRes.CoursesIDs))
+	for i, courseID := range staffCoursesRes.CoursesIDs {
+		// Get course details
+		courseReq := &coursespb.GetCourseRequest{
+			CourseID: courseID,
+			Token:    "token",
+		}
+
+		courseRes, err := r.CoursesClient.GetCourse(ctx, courseReq)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert to GraphQL model
+		courses[i] = &model.Course{
+			ID:            courseRes.Course.CourseID,
+			Name:          courseRes.Course.CourseName,
+			Semester:      courseRes.Course.Semester,
+			Description:   &courseRes.Course.Description,
+			CreatedAt:     time.Now().Format(time.RFC3339),
+			UpdatedAt:     time.Now().Format(time.RFC3339),
+			Staff:         []*model.Staff{},
+			Students:      []*model.Student{},
+			Announcements: []*model.Announcement{},
+			Homework:      []*model.Homework{},
+			Grades:        []*model.Grade{},
+		}
+	}
+
+	return courses, nil
 }
 
 // Grade is the resolver for the grade field.
 func (r *queryResolver) Grade(ctx context.Context, id string) (*model.Grade, error) {
-	panic(fmt.Errorf("not implemented: Grade - grade"))
+	// We don't have a direct GetGrade method in the proto
+	// We would need to implement this in the grades microservice or
+	// use an alternative approach like filtering the results of GetCourseGrades
+	// For this implementation, we'll leave this unimplemented
+	return nil, fmt.Errorf("not fully implemented: need a GetGrade method in the grades microservice")
 }
 
 // Grades is the resolver for the grades field.
 func (r *queryResolver) Grades(ctx context.Context, studentID *string, courseID *string) ([]*model.Grade, error) {
-	panic(fmt.Errorf("not implemented: Grades - grades"))
+	// This is a more complex query that might require different API calls based on the provided filters
+	// For now, we'll implement a simple approach that returns course grades if courseID is provided
+	// Otherwise, we'll return student semester grades if studentID is provided
+
+	if courseID != nil {
+		// Get all grades for a course
+		req := &gradespb.GetCourseGradesRequest{
+			CourseID: *courseID,
+			Semester: time.Now().Format("2006-01"), // Current semester, format as needed
+			Token:    "token",
+		}
+
+		res, err := r.GradesClient.GetCourseGrades(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+
+		return convertGradesToGraphQL(res.Grades), nil
+	} else if studentID != nil {
+		// Get all grades for a student in the current semester
+		req := &gradespb.GetStudentSemesterGradesRequest{
+			StudentID: *studentID,
+			Semester:  time.Now().Format("2006-01"), // Current semester, format as needed
+			Token:     "token",
+		}
+
+		res, err := r.GradesClient.GetStudentSemesterGrades(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+
+		return convertGradesToGraphQL(res.Grades), nil
+	}
+
+	return nil, fmt.Errorf("either studentID or courseID must be provided")
+}
+
+// CourseGrades is the resolver for the courseGrades field.
+func (r *queryResolver) CourseGrades(ctx context.Context, courseID string, semester string) ([]*model.Grade, error) {
+	// Get all grades for a course in a specific semester
+	req := &gradespb.GetCourseGradesRequest{
+		CourseID: courseID,
+		Semester: semester,
+		Token:    "token",
+	}
+
+	res, err := r.GradesClient.GetCourseGrades(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertGradesToGraphQL(res.Grades), nil
+}
+
+// StudentCourseGrades is the resolver for the studentCourseGrades field.
+func (r *queryResolver) StudentCourseGrades(ctx context.Context, studentID string, courseID string, semester string) ([]*model.Grade, error) {
+	// Get grades for a specific student in a specific course and semester
+	req := &gradespb.GetStudentCourseGradesRequest{
+		StudentID: studentID,
+		CourseID:  courseID,
+		Semester:  semester,
+		Token:     "token",
+	}
+
+	res, err := r.GradesClient.GetStudentCourseGrades(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertGradesToGraphQL(res.Grades), nil
+}
+
+// StudentSemesterGrades is the resolver for the studentSemesterGrades field.
+func (r *queryResolver) StudentSemesterGrades(ctx context.Context, studentID string, semester string) ([]*model.Grade, error) {
+	// Get all grades for a student in a specific semester
+	req := &gradespb.GetStudentSemesterGradesRequest{
+		StudentID: studentID,
+		Semester:  semester,
+		Token:     "token",
+	}
+
+	res, err := r.GradesClient.GetStudentSemesterGrades(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertGradesToGraphQL(res.Grades), nil
 }
 
 // Homework is the resolver for the homework field.
@@ -157,8 +976,38 @@ func (r *queryResolver) SubmissionsByStudent(ctx context.Context, studentID stri
 }
 
 // Announcement is the resolver for the announcement field.
-func (r *queryResolver) Announcement(ctx context.Context, courseID string) ([]*model.Announcement, error) {
+func (r *queryResolver) Announcement(ctx context.Context, id string) (*model.Announcement, error) {
 	panic(fmt.Errorf("not implemented: Announcement - announcement"))
+}
+
+// AnnouncementsByCourse is the resolver for the announcementsByCourse field.
+func (r *queryResolver) AnnouncementsByCourse(ctx context.Context, courseID string) ([]*model.Announcement, error) {
+	// Create a gRPC request to get course announcements
+	req := &coursespb.GetCourseAnnouncementsRequest{
+		CourseID: courseID,
+		Token:    "token",
+	}
+
+	// Call the courses microservice
+	res, err := r.CoursesClient.GetCourseAnnouncements(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	announcements := make([]*model.Announcement, len(res.Announcements))
+	for i, a := range res.Announcements {
+		announcements[i] = &model.Announcement{
+			ID:        a.AnnouncementID,
+			CourseID:  courseID,
+			Title:     a.AnnouncementTitle,
+			Content:   a.AnnouncementContent,
+			CreatedAt: time.Now().Format(time.RFC3339), // These should come from the microservice
+			UpdatedAt: time.Now().Format(time.RFC3339),
+		}
+	}
+
+	return announcements, nil
 }
 
 // Mutation returns MutationResolver implementation.
@@ -169,4 +1018,3 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-

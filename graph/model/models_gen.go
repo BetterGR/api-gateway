@@ -3,12 +3,12 @@
 package model
 
 type Announcement struct {
-	ID        string  `json:"id"`
-	CourseID  string  `json:"courseId"`
-	Title     *string `json:"title,omitempty"`
-	Content   string  `json:"content"`
-	CreatedAt string  `json:"createdAt"`
-	UpdatedAt string  `json:"updatedAt"`
+	ID        string `json:"id"`
+	CourseID  string `json:"courseId"`
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 type Course struct {
@@ -22,6 +22,7 @@ type Course struct {
 	Students      []*Student      `json:"students"`
 	Announcements []*Announcement `json:"announcements"`
 	Homework      []*Homework     `json:"homework"`
+	Grades        []*Grade        `json:"grades"`
 }
 
 type Grade struct {
@@ -53,9 +54,9 @@ type Mutation struct {
 }
 
 type NewAnnouncement struct {
-	CourseID string  `json:"courseId"`
-	Title    *string `json:"title,omitempty"`
-	Content  string  `json:"content"`
+	CourseID string `json:"courseId"`
+	Title    string `json:"title"`
+	Content  string `json:"content"`
 }
 
 type NewCourse struct {
@@ -103,25 +104,27 @@ type Query struct {
 }
 
 type Staff struct {
-	ID          string  `json:"id"`
-	FirstName   string  `json:"firstName"`
-	LastName    string  `json:"lastName"`
-	Email       string  `json:"email"`
-	PhoneNumber string  `json:"phoneNumber"`
-	Title       *string `json:"title,omitempty"`
-	Office      *string `json:"office,omitempty"`
-	CreatedAt   string  `json:"createdAt"`
-	UpdatedAt   string  `json:"updatedAt"`
+	ID          string    `json:"id"`
+	FirstName   string    `json:"firstName"`
+	LastName    string    `json:"lastName"`
+	Email       string    `json:"email"`
+	PhoneNumber string    `json:"phoneNumber"`
+	Title       *string   `json:"title,omitempty"`
+	Office      *string   `json:"office,omitempty"`
+	CreatedAt   string    `json:"createdAt"`
+	UpdatedAt   string    `json:"updatedAt"`
+	Courses     []*Course `json:"courses"`
 }
 
 type Student struct {
-	ID          string `json:"id"`
-	FirstName   string `json:"firstName"`
-	LastName    string `json:"lastName"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phoneNumber"`
-	CreatedAt   string `json:"createdAt"`
-	UpdatedAt   string `json:"updatedAt"`
+	ID          string    `json:"id"`
+	FirstName   string    `json:"firstName"`
+	LastName    string    `json:"lastName"`
+	Email       string    `json:"email"`
+	PhoneNumber string    `json:"phoneNumber"`
+	CreatedAt   string    `json:"createdAt"`
+	UpdatedAt   string    `json:"updatedAt"`
+	Courses     []*Course `json:"courses"`
 }
 
 type Submission struct {

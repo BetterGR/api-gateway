@@ -9,3 +9,5 @@
 
 # .idea folder
 .idea/
+
+.env
