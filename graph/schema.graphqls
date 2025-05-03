@@ -10,6 +10,7 @@ type Student {
   phoneNumber: String!
   createdAt: String!
   updatedAt: String!
+  courses: [Course!]!
 }
 
 type Staff {
@@ -22,6 +23,7 @@ type Staff {
   office: String
   createdAt: String!
   updatedAt: String!
+  courses: [Course!]!
 }
 
 type Course {
@@ -35,12 +37,13 @@ type Course {
   students: [Student!]!
   announcements: [Announcement!]!
   homework: [Homework!]!
+  grades: [Grade!]!
 }
 
 type Announcement {
   id: ID!
   courseId: ID!
-  title: String
+  title: String!
   content: String!
   createdAt: String!
   updatedAt: String!
@@ -73,7 +76,7 @@ type Grade {
   gradeType: String!
   itemId: String!
   gradeValue: String!
-  gradedBy: ID
+  gradedBy: String
   comments: String
   gradedAt: String!
   updatedAt: String!
@@ -84,25 +87,37 @@ type Grade {
 # =========================
 
 type Query {
+  # Student queries
   student(id: ID!): Student
-  students: [Student!]!
-
+  
+  # Staff queries
   staff(id: ID!): Staff
-  staffMembers: [Staff!]!
-
+  
+  # Course queries
   course(id: ID!): Course
-  courses: [Course!]!
-
+  courseStudents(courseId: ID!): [Student!]!
+  courseStaff(courseId: ID!): [Staff!]!
+  studentCourses(studentId: ID!): [Course!]!
+  staffCourses(staffId: ID!): [Course!]!
+  
+  # Grade queries
   grade(id: ID!): Grade
   grades(studentId: ID, courseId: ID): [Grade!]!
-
+  courseGrades(courseId: ID!, semester: String!): [Grade!]!
+  studentCourseGrades(studentId: ID!, courseId: ID!, semester: String!): [Grade!]!
+  studentSemesterGrades(studentId: ID!, semester: String!): [Grade!]!
+  
+  # Homework queries
   homework(id: ID!): Homework
   homeworkByCourse(courseId: ID!): [Homework!]!
-
+  
+  # Submission queries
   submission(id: ID!): Submission
   submissionsByStudent(studentId: ID!): [Submission!]!
-
-  announcement(courseId: ID!): [Announcement!]!
+  
+  # Announcement queries
+  announcement(id: ID!): Announcement
+  announcementsByCourse(courseId: ID!): [Announcement!]!
 }
 
 # =========================
@@ -110,29 +125,39 @@ type Query {
 # =========================
 
 type Mutation {
+  # Student mutations
   createStudent(input: NewStudent!): Student!
   updateStudent(id: ID!, input: UpdateStudent!): Student!
   deleteStudent(id: ID!): Boolean!
-
+  
+  # Staff mutations
   createStaff(input: NewStaff!): Staff!
   updateStaff(id: ID!, input: UpdateStaff!): Staff!
   deleteStaff(id: ID!): Boolean!
-
+  
+  # Course mutations
   createCourse(input: NewCourse!): Course!
   updateCourse(id: ID!, input: UpdateCourse!): Course!
   deleteCourse(id: ID!): Boolean!
-
-  assignStudentToCourse(courseId: ID!, studentId: ID!): Boolean!
-  assignStaffToCourse(courseId: ID!, staffId: ID!): Boolean!
-
+  
+  # Course enrollment mutations
+  addStudentToCourse(courseId: ID!, studentId: ID!): Boolean!
+  removeStudentFromCourse(courseId: ID!, studentId: ID!): Boolean!
+  addStaffToCourse(courseId: ID!, staffId: ID!): Boolean!
+  removeStaffFromCourse(courseId: ID!, staffId: ID!): Boolean!
+  
+  # Grade mutations
   createGrade(input: NewGrade!): Grade!
   updateGrade(id: ID!, input: UpdateGrade!): Grade!
-  deleteGrade(id: ID!): Boolean!
-
+  deleteGrade(id: ID!, courseId: ID!, semester: String!, studentId: ID!, gradeType: String!, itemId: String!): Boolean!
+  
+  # Homework mutations
   createHomework(input: NewHomework!): Homework!
   submitHomework(homeworkId: ID!, studentId: ID!): Submission!
-
+  
+  # Announcement mutations
   createAnnouncement(input: NewAnnouncement!): Announcement!
+  deleteAnnouncement(courseId: ID!, announcementId: ID!): Boolean!
 }
 
 # =========================
@@ -209,6 +234,6 @@ input NewHomework {
 
 input NewAnnouncement {
   courseId: ID!
-  title: String
+  title: String!
   content: String!
 }
