@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -10,7 +11,7 @@ import (
 	studentspb "github.com/BetterGR/students-microservice/protos"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-
+	"google.golang.org/grpc/metadata"
 )
 
 // This file will not be regenerated automatically.
@@ -56,7 +57,7 @@ func NewResolver() (*Resolver, error) {
 	staffEndpoint := getEnvOrDefault("STAFF_PORT", "localhost:50055")
 
 	// Setup connection to Students microservice
-	studentsConn, err := grpc.Dial(
+	studentsConn, err := grpc.NewClient(
 		studentsEndpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -66,7 +67,7 @@ func NewResolver() (*Resolver, error) {
 	studentsClient := studentspb.NewStudentsServiceClient(studentsConn)
 
 	// Setup connection to Staff microservice
-	staffConn, err := grpc.Dial(
+	staffConn, err := grpc.NewClient(
 		staffEndpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -76,7 +77,7 @@ func NewResolver() (*Resolver, error) {
 	staffClient := staffpb.NewStaffServiceClient(staffConn)
 
 	// Setup connection to Courses microservice
-	coursesConn, err := grpc.Dial(
+	coursesConn, err := grpc.NewClient(
 		coursesEndpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -86,7 +87,7 @@ func NewResolver() (*Resolver, error) {
 	coursesClient := coursespb.NewCoursesServiceClient(coursesConn)
 
 	// Setup connection to Grades microservice
-	gradesConn, err := grpc.Dial(
+	gradesConn, err := grpc.NewClient(
 		gradesEndpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -115,4 +116,21 @@ func getEnvOrDefault(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+// CreateAuthContext creates a new context with authentication metadata from the GraphQL context
+func (r *Resolver) CreateAuthContext(ctx context.Context) context.Context {
+	token := GetAuthToken(ctx)
+	if token == "" {
+		return ctx
+	}
+
+	// Create gRPC metadata with the authorization token
+	md := metadata.Pairs("authorization", "Bearer "+token)
+	return metadata.NewOutgoingContext(ctx, md)
+}
+
+// GetAuthTokenForRequest extracts the auth token for use in request messages
+func (r *Resolver) GetAuthTokenForRequest(ctx context.Context) string {
+	return GetAuthToken(ctx)
 }

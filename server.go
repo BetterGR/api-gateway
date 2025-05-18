@@ -57,8 +57,11 @@ func main() {
 		Cache: lru.New[string](100),
 	})
 
+	// Set up GraphQL playground
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+
+	// Apply the auth middleware to the query endpoint
+	http.Handle("/query", graph.AuthMiddleware(srv))
 
 	// Create an HTTP server
 	httpServer := &http.Server{

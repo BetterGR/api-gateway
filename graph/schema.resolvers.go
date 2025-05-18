@@ -18,6 +18,12 @@ import (
 
 // CreateStudent is the resolver for the createStudent field.
 func (r *mutationResolver) CreateStudent(ctx context.Context, input model.NewStudent) (*model.Student, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the students microservice
 	req := &studentspb.CreateStudentRequest{
 		Student: &studentspb.Student{
@@ -26,11 +32,11 @@ func (r *mutationResolver) CreateStudent(ctx context.Context, input model.NewStu
 			Email:       input.Email,
 			PhoneNumber: input.PhoneNumber,
 		},
-		Token: "token", // Assume this function extracts the auth token from context
+		Token: token, // Add token to request for backward compatibility
 	}
 
-	// Call the students microservice
-	res, err := r.StudentsClient.CreateStudent(ctx, req)
+	// Call the students microservice with the auth context
+	res, err := r.StudentsClient.CreateStudent(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +59,19 @@ func (r *mutationResolver) CreateStudent(ctx context.Context, input model.NewStu
 
 // UpdateStudent is the resolver for the updateStudent field.
 func (r *mutationResolver) UpdateStudent(ctx context.Context, id string, input model.UpdateStudent) (*model.Student, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// First get the current student data
 	getReq := &studentspb.GetStudentRequest{
 		StudentID: id,
-		Token:     "token",
+		Token:     token,
 	}
 
-	currentStudent, err := r.StudentsClient.GetStudent(ctx, getReq)
+	currentStudent, err := r.StudentsClient.GetStudent(authCtx, getReq)
 	if err != nil {
 		return nil, err
 	}
@@ -82,11 +94,11 @@ func (r *mutationResolver) UpdateStudent(ctx context.Context, id string, input m
 	// Create the update request
 	updateReq := &studentspb.UpdateStudentRequest{
 		Student: student,
-		Token:   "token",
+		Token:   token,
 	}
 
-	// Call the students microservice
-	res, err := r.StudentsClient.UpdateStudent(ctx, updateReq)
+	// Call the students microservice with the authenticated context
+	res, err := r.StudentsClient.UpdateStudent(authCtx, updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -107,14 +119,20 @@ func (r *mutationResolver) UpdateStudent(ctx context.Context, id string, input m
 
 // DeleteStudent is the resolver for the deleteStudent field.
 func (r *mutationResolver) DeleteStudent(ctx context.Context, id string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the delete request
 	req := &studentspb.DeleteStudentRequest{
 		StudentID: id,
-		Token:     "token",
+		Token:     token,
 	}
 
-	// Call the students microservice
-	_, err := r.StudentsClient.DeleteStudent(ctx, req)
+	// Call the students microservice with the authenticated context
+	_, err := r.StudentsClient.DeleteStudent(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -124,6 +142,12 @@ func (r *mutationResolver) DeleteStudent(ctx context.Context, id string) (bool, 
 
 // CreateStaff is the resolver for the createStaff field.
 func (r *mutationResolver) CreateStaff(ctx context.Context, input model.NewStaff) (*model.Staff, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the staff microservice
 	req := &staffpb.CreateStaffMemberRequest{
 		StaffMember: &staffpb.StaffMember{
@@ -134,11 +158,11 @@ func (r *mutationResolver) CreateStaff(ctx context.Context, input model.NewStaff
 			Title:       *input.Title,
 			Office:      *input.Office,
 		},
-		Token: "token",
+		Token: token,
 	}
 
-	// Call the staff microservice
-	res, err := r.StaffClient.CreateStaffMember(ctx, req)
+	// Call the staff microservice with the authenticated context
+	res, err := r.StaffClient.CreateStaffMember(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +187,19 @@ func (r *mutationResolver) CreateStaff(ctx context.Context, input model.NewStaff
 
 // UpdateStaff is the resolver for the updateStaff field.
 func (r *mutationResolver) UpdateStaff(ctx context.Context, id string, input model.UpdateStaff) (*model.Staff, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// First get the current staff data
 	getReq := &staffpb.GetStaffMemberRequest{
 		StaffID: id,
-		Token:   "token",
+		Token:   token,
 	}
 
-	currentStaff, err := r.StaffClient.GetStaffMember(ctx, getReq)
+	currentStaff, err := r.StaffClient.GetStaffMember(authCtx, getReq)
 	if err != nil {
 		return nil, err
 	}
@@ -198,11 +228,11 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, id string, input mod
 	// Create the update request
 	updateReq := &staffpb.UpdateStaffMemberRequest{
 		StaffMember: staffMember,
-		Token:       "token",
+		Token:       token,
 	}
 
-	// Call the staff microservice
-	res, err := r.StaffClient.UpdateStaffMember(ctx, updateReq)
+	// Call the staff microservice with the authenticated context
+	res, err := r.StaffClient.UpdateStaffMember(authCtx, updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -225,14 +255,20 @@ func (r *mutationResolver) UpdateStaff(ctx context.Context, id string, input mod
 
 // DeleteStaff is the resolver for the deleteStaff field.
 func (r *mutationResolver) DeleteStaff(ctx context.Context, id string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the delete request
 	req := &staffpb.DeleteStaffMemberRequest{
 		StaffID: id,
-		Token:   "token",
+		Token:   token,
 	}
 
-	// Call the staff microservice
-	_, err := r.StaffClient.DeleteStaffMember(ctx, req)
+	// Call the staff microservice with the authenticated context
+	_, err := r.StaffClient.DeleteStaffMember(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -242,6 +278,12 @@ func (r *mutationResolver) DeleteStaff(ctx context.Context, id string) (bool, er
 
 // CreateCourse is the resolver for the createCourse field.
 func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCourse) (*model.Course, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice
 	req := &coursespb.CreateCourseRequest{
 		Course: &coursespb.Course{
@@ -249,11 +291,11 @@ func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCour
 			Semester:    input.Semester,
 			Description: *input.Description,
 		},
-		Token: "token",
+		Token: token,
 	}
 
-	// Call the courses microservice
-	res, err := r.CoursesClient.CreateCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	res, err := r.CoursesClient.CreateCourse(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -279,13 +321,19 @@ func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCour
 
 // UpdateCourse is the resolver for the updateCourse field.
 func (r *mutationResolver) UpdateCourse(ctx context.Context, id string, input model.UpdateCourse) (*model.Course, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// First get the current course data
 	getReq := &coursespb.GetCourseRequest{
 		CourseID: id,
-		Token:    "token",
+		Token:    token,
 	}
 
-	currentCourse, err := r.CoursesClient.GetCourse(ctx, getReq)
+	currentCourse, err := r.CoursesClient.GetCourse(authCtx, getReq)
 	if err != nil {
 		return nil, err
 	}
@@ -305,11 +353,11 @@ func (r *mutationResolver) UpdateCourse(ctx context.Context, id string, input mo
 	// Create the update request
 	updateReq := &coursespb.UpdateCourseRequest{
 		Course: course,
-		Token:  "token",
+		Token:  token,
 	}
 
-	// Call the courses microservice
-	res, err := r.CoursesClient.UpdateCourse(ctx, updateReq)
+	// Call the courses microservice with the authenticated context
+	res, err := r.CoursesClient.UpdateCourse(authCtx, updateReq)
 	if err != nil {
 		return nil, err
 	}
@@ -333,14 +381,20 @@ func (r *mutationResolver) UpdateCourse(ctx context.Context, id string, input mo
 
 // DeleteCourse is the resolver for the deleteCourse field.
 func (r *mutationResolver) DeleteCourse(ctx context.Context, id string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the delete request
 	req := &coursespb.DeleteCourseRequest{
 		CourseID: id,
-		Token:    "token",
+		Token:    token,
 	}
 
-	// Call the courses microservice
-	_, err := r.CoursesClient.DeleteCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	_, err := r.CoursesClient.DeleteCourse(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -350,15 +404,21 @@ func (r *mutationResolver) DeleteCourse(ctx context.Context, id string) (bool, e
 
 // AddStudentToCourse is the resolver for the addStudentToCourse field.
 func (r *mutationResolver) AddStudentToCourse(ctx context.Context, courseID string, studentID string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the add student to course request
 	req := &coursespb.AddStudentRequest{
 		CourseID:  courseID,
 		StudentID: studentID,
-		Token:     "token",
+		Token:     token,
 	}
 
-	// Call the courses microservice
-	_, err := r.CoursesClient.AddStudentToCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	_, err := r.CoursesClient.AddStudentToCourse(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -368,15 +428,21 @@ func (r *mutationResolver) AddStudentToCourse(ctx context.Context, courseID stri
 
 // RemoveStudentFromCourse is the resolver for the removeStudentFromCourse field.
 func (r *mutationResolver) RemoveStudentFromCourse(ctx context.Context, courseID string, studentID string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the remove student from course request
 	req := &coursespb.RemoveStudentRequest{
 		CourseID:  courseID,
 		StudentID: studentID,
-		Token:     "token",
+		Token:     token,
 	}
 
-	// Call the courses microservice
-	_, err := r.CoursesClient.RemoveStudentFromCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	_, err := r.CoursesClient.RemoveStudentFromCourse(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -386,15 +452,21 @@ func (r *mutationResolver) RemoveStudentFromCourse(ctx context.Context, courseID
 
 // AddStaffToCourse is the resolver for the addStaffToCourse field.
 func (r *mutationResolver) AddStaffToCourse(ctx context.Context, courseID string, staffID string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the add staff to course request
 	req := &coursespb.AddStaffRequest{
 		CourseID: courseID,
 		StaffID:  staffID,
-		Token:    "token",
+		Token:    token,
 	}
 
-	// Call the courses microservice
-	_, err := r.CoursesClient.AddStaffToCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	_, err := r.CoursesClient.AddStaffToCourse(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -404,15 +476,21 @@ func (r *mutationResolver) AddStaffToCourse(ctx context.Context, courseID string
 
 // RemoveStaffFromCourse is the resolver for the removeStaffFromCourse field.
 func (r *mutationResolver) RemoveStaffFromCourse(ctx context.Context, courseID string, staffID string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the remove staff from course request
 	req := &coursespb.RemoveStaffRequest{
 		CourseID: courseID,
 		StaffID:  staffID,
-		Token:    "token",
+		Token:    token,
 	}
 
-	// Call the courses microservice
-	_, err := r.CoursesClient.RemoveStaffFromCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	_, err := r.CoursesClient.RemoveStaffFromCourse(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -422,6 +500,12 @@ func (r *mutationResolver) RemoveStaffFromCourse(ctx context.Context, courseID s
 
 // CreateGrade is the resolver for the createGrade field.
 func (r *mutationResolver) CreateGrade(ctx context.Context, input model.NewGrade) (*model.Grade, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the grades microservice
 	req := &gradespb.AddSingleGradeRequest{
 		Grade: &gradespb.SingleGrade{
@@ -434,11 +518,11 @@ func (r *mutationResolver) CreateGrade(ctx context.Context, input model.NewGrade
 			GradedBy:   *input.GradedBy,
 			Comments:   *input.Comments,
 		},
-		Token: "token",
+		Token: token,
 	}
 
-	// Call the grades microservice
-	res, err := r.GradesClient.AddSingleGrade(ctx, req)
+	// Call the grades microservice with the authenticated context
+	res, err := r.GradesClient.AddSingleGrade(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -464,6 +548,12 @@ func (r *mutationResolver) CreateGrade(ctx context.Context, input model.NewGrade
 
 // UpdateGrade is the resolver for the updateGrade field.
 func (r *mutationResolver) UpdateGrade(ctx context.Context, id string, input model.UpdateGrade) (*model.Grade, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the update request with just the fields to update
 	req := &gradespb.UpdateSingleGradeRequest{
 		Grade: &gradespb.SingleGrade{
@@ -471,11 +561,11 @@ func (r *mutationResolver) UpdateGrade(ctx context.Context, id string, input mod
 			GradeValue: *input.GradeValue,
 			Comments:   *input.Comments,
 		},
-		Token: "token",
+		Token: token,
 	}
 
-	// Call the grades microservice
-	res, err := r.GradesClient.UpdateSingleGrade(ctx, req)
+	// Call the grades microservice with the authenticated context
+	res, err := r.GradesClient.UpdateSingleGrade(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -499,6 +589,12 @@ func (r *mutationResolver) UpdateGrade(ctx context.Context, id string, input mod
 
 // DeleteGrade is the resolver for the deleteGrade field.
 func (r *mutationResolver) DeleteGrade(ctx context.Context, id string, courseID string, semester string, studentID string, gradeType string, itemID string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create the delete request
 	req := &gradespb.RemoveSingleGradeRequest{
 		GradeID:   id,
@@ -507,11 +603,11 @@ func (r *mutationResolver) DeleteGrade(ctx context.Context, id string, courseID 
 		StudentID: studentID,
 		GradeType: gradeType,
 		ItemID:    itemID,
-		Token:     "token",
+		Token:     token,
 	}
 
-	// Call the grades microservice
-	_, err := r.GradesClient.RemoveSingleGrade(ctx, req)
+	// Call the grades microservice with the authenticated context
+	_, err := r.GradesClient.RemoveSingleGrade(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -521,16 +617,26 @@ func (r *mutationResolver) DeleteGrade(ctx context.Context, id string, courseID 
 
 // CreateHomework is the resolver for the createHomework field.
 func (r *mutationResolver) CreateHomework(ctx context.Context, input model.NewHomework) (*model.Homework, error) {
-	panic(fmt.Errorf("not implemented: CreateHomework - createHomework"))
+	// Not implemented yet, but will need token authentication
+	_ = r.GetAuthTokenForRequest(ctx)
+	_ = r.CreateAuthContext(ctx)
+	return nil, fmt.Errorf("not implemented: CreateHomework - createHomework")
 }
 
 // SubmitHomework is the resolver for the submitHomework field.
 func (r *mutationResolver) SubmitHomework(ctx context.Context, homeworkID string, studentID string) (*model.Submission, error) {
-	panic(fmt.Errorf("not implemented: SubmitHomework - submitHomework"))
+	// For now, return not implemented error - but using the token and auth context when implemented
+	return nil, fmt.Errorf("not implemented: SubmitHomework - submitHomework")
 }
 
 // CreateAnnouncement is the resolver for the createAnnouncement field.
 func (r *mutationResolver) CreateAnnouncement(ctx context.Context, input model.NewAnnouncement) (*model.Announcement, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice
 	req := &coursespb.AddAnnouncementRequest{
 		CourseID: input.CourseID,
@@ -538,11 +644,11 @@ func (r *mutationResolver) CreateAnnouncement(ctx context.Context, input model.N
 			AnnouncementTitle:   input.Title,
 			AnnouncementContent: input.Content,
 		},
-		Token: "token",
+		Token: token, // Add token to request for backward compatibility
 	}
 
-	// Call the courses microservice
-	res, err := r.CoursesClient.AddAnnouncementToCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	res, err := r.CoursesClient.AddAnnouncementToCourse(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -563,15 +669,21 @@ func (r *mutationResolver) CreateAnnouncement(ctx context.Context, input model.N
 
 // DeleteAnnouncement is the resolver for the deleteAnnouncement field.
 func (r *mutationResolver) DeleteAnnouncement(ctx context.Context, courseID string, announcementID string) (bool, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to delete an announcement
 	req := &coursespb.RemoveAnnouncementRequest{
 		CourseID:       courseID,
 		AnnouncementID: announcementID,
-		Token:          "token",
+		Token:          token,
 	}
 
-	// Call the courses microservice
-	_, err := r.CoursesClient.RemoveAnnouncementFromCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	_, err := r.CoursesClient.RemoveAnnouncementFromCourse(authCtx, req)
 	if err != nil {
 		return false, err
 	}
@@ -581,14 +693,20 @@ func (r *mutationResolver) DeleteAnnouncement(ctx context.Context, courseID stri
 
 // Student is the resolver for the student field.
 func (r *queryResolver) Student(ctx context.Context, id string) (*model.Student, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the students microservice
 	req := &studentspb.GetStudentRequest{
 		StudentID: id,
-		Token:     "token",
+		Token:     token, // Add token to request for backward compatibility
 	}
 
-	// Call the students microservice
-	res, err := r.StudentsClient.GetStudent(ctx, req)
+	// Call the students microservice with the authenticated context
+	res, err := r.StudentsClient.GetStudent(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -610,14 +728,20 @@ func (r *queryResolver) Student(ctx context.Context, id string) (*model.Student,
 
 // Staff is the resolver for the staff field.
 func (r *queryResolver) Staff(ctx context.Context, id string) (*model.Staff, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the staff microservice
 	req := &staffpb.GetStaffMemberRequest{
 		StaffID: id,
-		Token:   "token",
+		Token:   token,
 	}
 
-	// Call the staff microservice
-	res, err := r.StaffClient.GetStaffMember(ctx, req)
+	// Call the staff microservice with the authenticated context
+	res, err := r.StaffClient.GetStaffMember(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -641,14 +765,20 @@ func (r *queryResolver) Staff(ctx context.Context, id string) (*model.Staff, err
 
 // Course is the resolver for the course field.
 func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice
 	req := &coursespb.GetCourseRequest{
 		CourseID: id,
-		Token:    "token",
+		Token:    token,
 	}
 
-	// Call the courses microservice
-	res, err := r.CoursesClient.GetCourse(ctx, req)
+	// Call the courses microservice with the authenticated context
+	res, err := r.CoursesClient.GetCourse(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -673,14 +803,20 @@ func (r *queryResolver) Course(ctx context.Context, id string) (*model.Course, e
 
 // CourseStudents is the resolver for the courseStudents field.
 func (r *queryResolver) CourseStudents(ctx context.Context, courseID string) ([]*model.Student, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice to get student IDs
 	courseStudentsReq := &coursespb.GetCourseStudentsRequest{
 		CourseID: courseID,
-		Token:    "token",
+		Token:    token,
 	}
 
-	// Call the courses microservice
-	courseStudentsRes, err := r.CoursesClient.GetCourseStudents(ctx, courseStudentsReq)
+	// Call the courses microservice with the authenticated context
+	courseStudentsRes, err := r.CoursesClient.GetCourseStudents(authCtx, courseStudentsReq)
 	if err != nil {
 		return nil, err
 	}
@@ -691,10 +827,10 @@ func (r *queryResolver) CourseStudents(ctx context.Context, courseID string) ([]
 		// Get student details
 		studentReq := &studentspb.GetStudentRequest{
 			StudentID: studentID,
-			Token:     "token",
+			Token:     token,
 		}
 
-		studentRes, err := r.StudentsClient.GetStudent(ctx, studentReq)
+		studentRes, err := r.StudentsClient.GetStudent(authCtx, studentReq)
 		if err != nil {
 			return nil, err
 		}
@@ -717,14 +853,20 @@ func (r *queryResolver) CourseStudents(ctx context.Context, courseID string) ([]
 
 // CourseStaff is the resolver for the courseStaff field.
 func (r *queryResolver) CourseStaff(ctx context.Context, courseID string) ([]*model.Staff, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice to get staff IDs
 	courseStaffReq := &coursespb.GetCourseStaffRequest{
 		CourseID: courseID,
-		Token:    "token",
+		Token:    token,
 	}
 
-	// Call the courses microservice
-	courseStaffRes, err := r.CoursesClient.GetCourseStaff(ctx, courseStaffReq)
+	// Call the courses microservice with the authenticated context
+	courseStaffRes, err := r.CoursesClient.GetCourseStaff(authCtx, courseStaffReq)
 	if err != nil {
 		return nil, err
 	}
@@ -735,10 +877,10 @@ func (r *queryResolver) CourseStaff(ctx context.Context, courseID string) ([]*mo
 		// Get staff details
 		staffReq := &staffpb.GetStaffMemberRequest{
 			StaffID: staffID,
-			Token:   "token",
+			Token:   token,
 		}
 
-		staffRes, err := r.StaffClient.GetStaffMember(ctx, staffReq)
+		staffRes, err := r.StaffClient.GetStaffMember(authCtx, staffReq)
 		if err != nil {
 			return nil, err
 		}
@@ -763,14 +905,20 @@ func (r *queryResolver) CourseStaff(ctx context.Context, courseID string) ([]*mo
 
 // StudentCourses is the resolver for the studentCourses field.
 func (r *queryResolver) StudentCourses(ctx context.Context, studentID string) ([]*model.Course, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice to get course IDs for a student
 	studentCoursesReq := &coursespb.GetStudentCoursesRequest{
 		StudentID: studentID,
-		Token:     "token",
+		Token:     token,
 	}
 
-	// Call the courses microservice
-	studentCoursesRes, err := r.CoursesClient.GetStudentCourses(ctx, studentCoursesReq)
+	// Call the courses microservice with the authenticated context
+	studentCoursesRes, err := r.CoursesClient.GetStudentCourses(authCtx, studentCoursesReq)
 	if err != nil {
 		return nil, err
 	}
@@ -781,10 +929,10 @@ func (r *queryResolver) StudentCourses(ctx context.Context, studentID string) ([
 		// Get course details
 		courseReq := &coursespb.GetCourseRequest{
 			CourseID: courseID,
-			Token:    "token",
+			Token:    token,
 		}
 
-		courseRes, err := r.CoursesClient.GetCourse(ctx, courseReq)
+		courseRes, err := r.CoursesClient.GetCourse(authCtx, courseReq)
 		if err != nil {
 			return nil, err
 		}
@@ -810,14 +958,20 @@ func (r *queryResolver) StudentCourses(ctx context.Context, studentID string) ([
 
 // StaffCourses is the resolver for the staffCourses field.
 func (r *queryResolver) StaffCourses(ctx context.Context, staffID string) ([]*model.Course, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to the courses microservice to get course IDs for a staff member
 	staffCoursesReq := &coursespb.GetStaffCoursesRequest{
 		StaffID: staffID,
-		Token:   "token",
+		Token:   token,
 	}
 
-	// Call the courses microservice
-	staffCoursesRes, err := r.CoursesClient.GetStaffCourses(ctx, staffCoursesReq)
+	// Call the courses microservice with the authenticated context
+	staffCoursesRes, err := r.CoursesClient.GetStaffCourses(authCtx, staffCoursesReq)
 	if err != nil {
 		return nil, err
 	}
@@ -828,10 +982,10 @@ func (r *queryResolver) StaffCourses(ctx context.Context, staffID string) ([]*mo
 		// Get course details
 		courseReq := &coursespb.GetCourseRequest{
 			CourseID: courseID,
-			Token:    "token",
+			Token:    token,
 		}
 
-		courseRes, err := r.CoursesClient.GetCourse(ctx, courseReq)
+		courseRes, err := r.CoursesClient.GetCourse(authCtx, courseReq)
 		if err != nil {
 			return nil, err
 		}
@@ -866,6 +1020,12 @@ func (r *queryResolver) Grade(ctx context.Context, id string) (*model.Grade, err
 
 // Grades is the resolver for the grades field.
 func (r *queryResolver) Grades(ctx context.Context, studentID *string, courseID *string) ([]*model.Grade, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// This is a more complex query that might require different API calls based on the provided filters
 	// For now, we'll implement a simple approach that returns course grades if courseID is provided
 	// Otherwise, we'll return student semester grades if studentID is provided
@@ -875,10 +1035,10 @@ func (r *queryResolver) Grades(ctx context.Context, studentID *string, courseID 
 		req := &gradespb.GetCourseGradesRequest{
 			CourseID: *courseID,
 			Semester: time.Now().Format("2006-01"), // Current semester, format as needed
-			Token:    "token",
+			Token:    token,                        // Add token to request for backward compatibility
 		}
 
-		res, err := r.GradesClient.GetCourseGrades(ctx, req)
+		res, err := r.GradesClient.GetCourseGrades(authCtx, req)
 		if err != nil {
 			return nil, err
 		}
@@ -889,10 +1049,10 @@ func (r *queryResolver) Grades(ctx context.Context, studentID *string, courseID 
 		req := &gradespb.GetStudentSemesterGradesRequest{
 			StudentID: *studentID,
 			Semester:  time.Now().Format("2006-01"), // Current semester, format as needed
-			Token:     "token",
+			Token:     token,                        // Add token to request for backward compatibility
 		}
 
-		res, err := r.GradesClient.GetStudentSemesterGrades(ctx, req)
+		res, err := r.GradesClient.GetStudentSemesterGrades(authCtx, req)
 		if err != nil {
 			return nil, err
 		}
@@ -905,14 +1065,21 @@ func (r *queryResolver) Grades(ctx context.Context, studentID *string, courseID 
 
 // CourseGrades is the resolver for the courseGrades field.
 func (r *queryResolver) CourseGrades(ctx context.Context, courseID string, semester string) ([]*model.Grade, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Get all grades for a course in a specific semester
 	req := &gradespb.GetCourseGradesRequest{
 		CourseID: courseID,
 		Semester: semester,
-		Token:    "token",
+		Token:    token,
 	}
 
-	res, err := r.GradesClient.GetCourseGrades(ctx, req)
+	// Call the grades microservice with the authenticated context
+	res, err := r.GradesClient.GetCourseGrades(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -922,15 +1089,22 @@ func (r *queryResolver) CourseGrades(ctx context.Context, courseID string, semes
 
 // StudentCourseGrades is the resolver for the studentCourseGrades field.
 func (r *queryResolver) StudentCourseGrades(ctx context.Context, studentID string, courseID string, semester string) ([]*model.Grade, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Get grades for a specific student in a specific course and semester
 	req := &gradespb.GetStudentCourseGradesRequest{
 		StudentID: studentID,
 		CourseID:  courseID,
 		Semester:  semester,
-		Token:     "token",
+		Token:     token,
 	}
 
-	res, err := r.GradesClient.GetStudentCourseGrades(ctx, req)
+	// Call the grades microservice with the authenticated context
+	res, err := r.GradesClient.GetStudentCourseGrades(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -940,14 +1114,21 @@ func (r *queryResolver) StudentCourseGrades(ctx context.Context, studentID strin
 
 // StudentSemesterGrades is the resolver for the studentSemesterGrades field.
 func (r *queryResolver) StudentSemesterGrades(ctx context.Context, studentID string, semester string) ([]*model.Grade, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Get all grades for a student in a specific semester
 	req := &gradespb.GetStudentSemesterGradesRequest{
 		StudentID: studentID,
 		Semester:  semester,
-		Token:     "token",
+		Token:     token,
 	}
 
-	res, err := r.GradesClient.GetStudentSemesterGrades(ctx, req)
+	// Call the grades microservice with the authenticated context
+	res, err := r.GradesClient.GetStudentSemesterGrades(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -957,39 +1138,60 @@ func (r *queryResolver) StudentSemesterGrades(ctx context.Context, studentID str
 
 // Homework is the resolver for the homework field.
 func (r *queryResolver) Homework(ctx context.Context, id string) (*model.Homework, error) {
-	panic(fmt.Errorf("not implemented: Homework - homework"))
+	// Not implemented yet, but will need token authentication
+	_ = r.GetAuthTokenForRequest(ctx)
+	_ = r.CreateAuthContext(ctx)
+	return nil, fmt.Errorf("not implemented: Homework - homework")
 }
 
 // HomeworkByCourse is the resolver for the homeworkByCourse field.
 func (r *queryResolver) HomeworkByCourse(ctx context.Context, courseID string) ([]*model.Homework, error) {
-	panic(fmt.Errorf("not implemented: HomeworkByCourse - homeworkByCourse"))
+	// Not implemented yet, but will need token authentication
+	_ = r.GetAuthTokenForRequest(ctx)
+	_ = r.CreateAuthContext(ctx)
+	return nil, fmt.Errorf("not implemented: HomeworkByCourse - homeworkByCourse")
 }
 
 // Submission is the resolver for the submission field.
 func (r *queryResolver) Submission(ctx context.Context, id string) (*model.Submission, error) {
-	panic(fmt.Errorf("not implemented: Submission - submission"))
+	// Not implemented yet, but will need token authentication
+	_ = r.GetAuthTokenForRequest(ctx)
+	_ = r.CreateAuthContext(ctx)
+	return nil, fmt.Errorf("not implemented: Submission - submission")
 }
 
 // SubmissionsByStudent is the resolver for the submissionsByStudent field.
 func (r *queryResolver) SubmissionsByStudent(ctx context.Context, studentID string) ([]*model.Submission, error) {
-	panic(fmt.Errorf("not implemented: SubmissionsByStudent - submissionsByStudent"))
+	// Not implemented yet, but will need token authentication
+	_ = r.GetAuthTokenForRequest(ctx)
+	_ = r.CreateAuthContext(ctx)
+	return nil, fmt.Errorf("not implemented: SubmissionsByStudent - submissionsByStudent")
 }
 
 // Announcement is the resolver for the announcement field.
 func (r *queryResolver) Announcement(ctx context.Context, id string) (*model.Announcement, error) {
-	panic(fmt.Errorf("not implemented: Announcement - announcement"))
+	// Not implemented yet, but will need token authentication
+	_ = r.GetAuthTokenForRequest(ctx)
+	_ = r.CreateAuthContext(ctx)
+	return nil, fmt.Errorf("not implemented: Announcement - announcement")
 }
 
 // AnnouncementsByCourse is the resolver for the announcementsByCourse field.
 func (r *queryResolver) AnnouncementsByCourse(ctx context.Context, courseID string) ([]*model.Announcement, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
 	// Create a gRPC request to get course announcements
 	req := &coursespb.GetCourseAnnouncementsRequest{
 		CourseID: courseID,
-		Token:    "token",
+		Token:    token, // Add token to request for backward compatibility
 	}
 
-	// Call the courses microservice
-	res, err := r.CoursesClient.GetCourseAnnouncements(ctx, req)
+	// Call the courses microservice with the authenticated context
+	res, err := r.CoursesClient.GetCourseAnnouncements(authCtx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -1016,5 +1218,7 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+type (
+	mutationResolver struct{ *Resolver }
+	queryResolver    struct{ *Resolver }
+)

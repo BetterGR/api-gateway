@@ -3,8 +3,8 @@ package graph
 import (
 	"time"
 
-	gradespb "github.com/BetterGR/grades-microservice/protos"
 	"github.com/BetterGR/api-gateway/graph/model"
+	gradespb "github.com/BetterGR/grades-microservice/protos"
 )
 
 func convertGradesToGraphQL(grades []*gradespb.SingleGrade) []*model.Grade {
