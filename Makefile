@@ -105,7 +105,7 @@ build: fmt vet lint
 	@echo [BUILD] Server binary built successfully.
 
 # Run the server
-run: fmt vet lint
+run: fmt vet
 	@echo [RUN] Starting server...
 	@go run ./server.go $(ARGS)
 

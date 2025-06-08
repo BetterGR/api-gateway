@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "generate-docs": "spectaql spectaql-config.yml"
+  },
+  "devDependencies": {
+    "@graphql-markdown/cli": "^0.3.0",
+    "graphql-config": "^5.1.5",
+    "graphql-markdown": "^7.3.0",
+    "graphql-markdown-generator": "^1.0.6",
+    "spectaql": "^3.0.4"
+  }
+}
