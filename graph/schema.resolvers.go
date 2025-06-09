@@ -1045,11 +1045,12 @@ func (r *queryResolver) Grades(ctx context.Context, studentID *string, courseID 
 
 		return convertGradesToGraphQL(res.Grades), nil
 	} else if studentID != nil {
-		// Get all grades for a student in the current semester
+		// Get all grades for a student across all semesters by using an empty semester
+		// This will be handled by the grades service to return all grades
 		req := &gradespb.GetStudentSemesterGradesRequest{
 			StudentID: *studentID,
-			Semester:  time.Now().Format("2006-01"), // Current semester, format as needed
-			Token:     token,                        // Add token to request for backward compatibility
+			Semester:  "", // Empty semester to get all grades
+			Token:     token,
 		}
 
 		res, err := r.GradesClient.GetStudentSemesterGrades(authCtx, req)
