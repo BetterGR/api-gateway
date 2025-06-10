@@ -56,6 +56,31 @@ gqlgen generate
 
 This will update all generated files based on your schema changes.
 
+## Tools API for AI Models
+
+The API Gateway includes a Tools API that enables AI models to interact with the BetterGR system programmatically.
+
+### Endpoints
+
+- `GET /tools`: Returns a list of all available tools and their parameters
+- `POST /tools/execute`: Executes a specified tool with provided parameters
+
+### Authentication
+
+Tools API requests require authentication. Include an `Authorization` header with a JWT token:
+
+```
+Authorization: Bearer your-jwt-token
+```
+
+### Example Usage
+
+To see examples of how to use the Tools API from an AI model, refer to:
+- JavaScript: `examples/ai_client_example.js`
+- Python: `examples/ai_client_example.py`
+
+For detailed documentation on the Tools API and available tools, see [API Tools Documentation](docs/ai_tool_usage.md).
+
 ## License
 
 This project is licensed under the Apache 2.0 License. See the LICENSE file for more details.

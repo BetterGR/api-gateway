@@ -13,6 +13,7 @@
 .env
 
 server
+*.exe
 
 .DS_Store
 node_modules

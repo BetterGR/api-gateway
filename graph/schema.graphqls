@@ -82,6 +82,19 @@ type Grade {
   updatedAt: String!
 }
 
+type ChatMessage {
+  id: ID!
+  content: String!
+  sender: String!
+  timestamp: String!
+}
+
+type ChatResponse {
+  id: ID!
+  content: String!
+  timestamp: String!
+}
+
 # =========================
 # QUERIES
 # =========================
@@ -158,6 +171,9 @@ type Mutation {
   # Announcement mutations
   createAnnouncement(input: NewAnnouncement!): Announcement!
   deleteAnnouncement(courseId: ID!, announcementId: ID!): Boolean!
+  
+  # ChatBot mutations
+  processChatMessage(input: ChatHistoryInput!): ChatResponse!
 }
 
 # =========================
@@ -236,4 +252,23 @@ input NewAnnouncement {
   courseId: ID!
   title: String!
   content: String!
+}
+
+# Input types for chat functionality
+input ChatHistoryInput {
+  newMessage: String!
+  chatHistory: [ChatMessageInput!]!
+  context: ChatContextInput
+}
+
+input ChatMessageInput {
+  role: String!
+  content: String!
+}
+
+input ChatContextInput {
+  userId: ID
+  userRole: String
+  courseId: ID
+  sessionId: ID
 }

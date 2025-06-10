@@ -63,6 +63,9 @@ func main() {
 	// Apply the auth middleware to the query endpoint
 	http.Handle("/query", graph.AuthMiddleware(srv))
 
+	// Register tool API endpoints for AI model to discover and use
+	graph.RegisterToolHandlers(resolver, http.DefaultServeMux)
+
 	// Create an HTTP server
 	httpServer := &http.Server{
 		Addr:    ":" + port,

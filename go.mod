@@ -8,6 +8,7 @@ require (
 	github.com/BetterGR/grades-microservice v0.0.0-20250518152351-15535a69b1c0
 	github.com/BetterGR/staff-microservice v0.0.0-20250513170136-1617e411be80
 	github.com/BetterGR/students-microservice v0.0.0-20250511141247-3588026750ad
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/vektah/gqlparser/v2 v2.5.27
 	google.golang.org/grpc v1.72.1
@@ -16,7 +17,6 @@ require (
 require (
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect

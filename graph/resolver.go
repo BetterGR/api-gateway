@@ -23,6 +23,8 @@ type Resolver struct {
 	StaffClient    staffpb.StaffServiceClient
 	CoursesClient  coursespb.CoursesServiceClient
 	GradesClient   gradespb.GradesServiceClient
+	ChatBotClient  *ChatBotClient
+	ToolRegistry   *ToolRegistry
 
 	// Store connection objects to properly close them
 	studentsConn *grpc.ClientConn
@@ -98,16 +100,25 @@ func NewResolver() (*Resolver, error) {
 
 	// Note: Homework service is not used directly as it's probably part of the courses service
 
-	return &Resolver{
+	// Initialize the ChatBot client
+	chatBotClient := NewChatBotClient()
+
+	resolver := &Resolver{
 		StudentsClient: studentsClient,
 		StaffClient:    staffClient,
 		CoursesClient:  coursesClient,
 		GradesClient:   gradesClient,
+		ChatBotClient:  chatBotClient,
 		studentsConn:   studentsConn,
 		staffConn:      staffConn,
 		coursesConn:    coursesConn,
 		gradesConn:     gradesConn,
-	}, nil
+	}
+
+	// Initialize the tool registry with this resolver
+	resolver.ToolRegistry = NewToolRegistry(resolver)
+
+	return resolver, nil
 }
 
 // Helper function to get environment variable with fallback
