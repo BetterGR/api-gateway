@@ -1009,6 +1009,47 @@ func (r *queryResolver) StaffCourses(ctx context.Context, staffID string) ([]*mo
 	return courses, nil
 }
 
+// SemesterCourses is the resolver for the semesterCourses field.
+func (r *queryResolver) SemesterCourses(ctx context.Context, semester string) ([]*model.Course, error) {
+	// Create an authenticated context with the token
+	authCtx := r.CreateAuthContext(ctx)
+
+	// Get the token for the request
+	token := r.GetAuthTokenForRequest(ctx)
+
+	// Create a gRPC request to the courses microservice
+	req := &coursespb.GetSemesterCoursesRequest{
+		Semester: semester,
+		Token:    token,
+	}
+
+	// Call the courses microservice with the authenticated context
+	res, err := r.CoursesClient.GetSemesterCourses(authCtx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to GraphQL model
+	courses := make([]*model.Course, len(res.Courses))
+	for i, c := range res.Courses {
+		courses[i] = &model.Course{
+			ID:            c.CourseID,
+			Name:          c.CourseName,
+			Semester:      c.Semester,
+			Description:   &c.Description,
+			CreatedAt:     time.Now().Format(time.RFC3339), // These should come from the microservice
+			UpdatedAt:     time.Now().Format(time.RFC3339),
+			Staff:         []*model.Staff{},
+			Students:      []*model.Student{},
+			Announcements: []*model.Announcement{},
+			Homework:      []*model.Homework{},
+			Grades:        []*model.Grade{},
+		}
+	}
+
+	return courses, nil
+}
+
 // Grade is the resolver for the grade field.
 func (r *queryResolver) Grade(ctx context.Context, id string) (*model.Grade, error) {
 	// We don't have a direct GetGrade method in the proto
