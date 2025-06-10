@@ -1,0 +1,20 @@
+specVersion: 1
+spectaql:
+  logoFile: ./logo.png
+
+introspection:
+  schemaFile: ./graph/schema.graphqls
+  queryNameStrategy: capitalizeFirst
+  fieldExpansionDepth: 2
+
+info:
+  title: BetterGR API Documentation
+  description: Documentation for the BetterGR API Gateway
+  version: 1.0.0
+  contact:
+    name: BetterGR Team
+    url: https://github.com/username/BetterGR
+servers:
+  - url: http://localhost:1234/query
+    description: Local development server
+    production: false

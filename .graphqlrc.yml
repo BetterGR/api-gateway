@@ -1,0 +1,9 @@
+schema: ./graph/schema.graphqls
+documents: ./graph/**/*.graphqls
+extensions:
+  graphql-markdown:
+    rootPath: ./graphql-docs
+    baseURL: ./graphql-docs/
+    homepage: ./README.md
+    loaders:
+      - ./graph/**/*.graphqls

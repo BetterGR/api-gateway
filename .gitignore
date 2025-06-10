@@ -11,3 +11,8 @@
 .idea/
 
 .env
+
+server
+
+.DS_Store
+node_modules

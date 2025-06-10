@@ -99,6 +99,7 @@ type Query {
   courseStaff(courseId: ID!): [Staff!]!
   studentCourses(studentId: ID!): [Course!]!
   staffCourses(staffId: ID!): [Course!]!
+  semesterCourses(semester: String!): [Course!]!
   
   # Grade queries
   grade(id: ID!): Grade
